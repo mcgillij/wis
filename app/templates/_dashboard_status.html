@@ -1,0 +1,34 @@
+{% if message %}<div class="card message"><strong>{{ message }}</strong></div>{% endif %}
+<div class="card">
+  <div class="row"><h2 style="margin:0">Queue</h2><span class="badge">{{ queued|length }} queued</span><span class="badge">{{ completed|length }} recent complete shown</span></div>
+  <h3>Active inbox</h3>
+  <ul class="clean">
+    {% for item in queued %}<li><a href="/source/inbox/{{ item.name }}">{{ item.name }}</a></li>{% else %}<li class="muted">No active inbox items.</li>{% endfor %}
+  </ul>
+  <h3>Completed</h3>
+  <ul class="clean">
+    {% for item in completed %}<li><a href="/source/complete/{{ item.name }}">{{ item.name }}</a></li>{% else %}<li class="muted">No completed items yet.</li>{% endfor %}
+  </ul>
+</div>
+
+<div class="card">
+  <div class="row"><h2 style="margin:0">Outbox</h2><span class="badge">{{ report_total }} reports</span></div>
+  <form hx-post="/admin/organize-outbox" hx-target="#dashboard-status" hx-swap="innerHTML" method="post" style="display:inline"><button class="secondary" type="submit">Organize legacy reports</button></form>
+  <form hx-post="/admin/regenerate-index" hx-target="#dashboard-status" hx-swap="innerHTML" method="post" style="display:inline"><button class="secondary" type="submit">Regenerate static index</button></form>
+  {% for day, reports in reports_by_date.items() %}
+    <div class="report-day">
+      <div><a href="/outbox/{{ day }}/"><strong>{{ day }}</strong></a><br><span class="badge">{{ reports|length }}</span></div>
+      <ol class="report-list">
+        {% for report in reports[:8] %}<li><a href="/reports/{{ day }}/{{ report.filename }}">{{ report.title }}</a></li>{% endfor %}
+        {% if reports|length > 8 %}<li class="muted">{{ reports|length - 8 }} more…</li>{% endif %}
+      </ol>
+    </div>
+  {% else %}<p class="muted">No reports yet.</p>{% endfor %}
+</div>
+
+<div class="card">
+  <h2>Recent runs</h2>
+  <ul class="clean">
+    {% for run in runs %}<li><a href="/source/runs/{{ run.name }}">{{ run.name }}</a></li>{% else %}<li class="muted">No run notes yet.</li>{% endfor %}
+  </ul>
+</div>

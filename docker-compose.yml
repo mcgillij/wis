@@ -1,0 +1,11 @@
+services:
+  wis:
+    build: .
+    container_name: wis
+    ports:
+      - "8765:8000"
+    volumes:
+      - ./inbox:/app/inbox
+      - ./outbox:/app/outbox
+      - ./runs:/app/runs
+    restart: unless-stopped

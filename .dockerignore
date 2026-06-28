@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.git/
+.hermes/
+.venv/
+.DS_Store
