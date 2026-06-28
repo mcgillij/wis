@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Space Gameplay Depth Gaps</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>3D Space Gameplay Depth Gaps</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-gameplay-depth-gaps.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Gameplay Elements Lacking Depth Audit `/home/j/3d-space` for gameplay systems that exist in some form but lack depth, meaningful player choices, progression, consequences, or systemic interaction. ## Goal Produce a standalone HTML report identifying which gameplay elements are shallow today and how to deepen them. ## Focus areas - Trading and economy depth: supply/demand, price history, production/consumption, station roles, NPC trade routes. - Combat depth: weapon variety, damage consequences, targetin…</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>The main depth gap is not lack of mechanics; it is lack of durable, player-understandable cause and effect. There are sophisticated services for simulation, combat, trading, discovery, faction conflict, bounty hunts, piracy, and star scanning, but they need tighter loops so the player perceives systemic depth instead of isolated features.</p>
+<p>A second gap is decision pressure. Many systems can produce outcomes, but the player often needs a clearer tradeoff: comply or fight, sell cargo now or starve a market, scan safely or chase higher quality, help one faction at the expense of another, or risk a dangerous route for better profit.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>Piracy has strong staged behavior but should create persistent reputation/risk/economy consequences beyond the encounter result.</li>
+<li>Markets can record simulated state and player/NPC trade facts, but the player needs clearer price/inventory trend explanations and route-level causal stories.</li>
+<li>Faction systems and conflict events exist, but player-facing standings, access, hostility, patrol support, and job availability should react more visibly.</li>
+<li>Combat has robust weapon/damage/AI infrastructure, but encounter variety can be improved with objectives and AI roles rather than more weapon types.</li>
+<li>Star scanning has real tuning mechanics, but the player needs clearer preview/reward framing: what does this mode reveal, why does quality matter, and what new action unlocks after completion?</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>Depth gap 1 — Cause/effect presentation. FeedEventService projects simulation events, and JobBoardPresenter builds active event/job entries. Use these as the narrative layer for systemic consequences. Every meaningful player action should produce one of: market trend, route risk, faction reputation, bounty progress, discovery value, or patrol/conflict pressure.</p>
+<p>Depth gap 2 — Role-based NPC agency. NpcShip contains role_tag, cargo data, risk, route success/disruption counts, and hostility mode. Those fields should shape behavior and hails: miners ask for protection near belts, traders broadcast shortages, pirates select cargo-rich targets, patrols respond to distress, smugglers avoid scans, and escorts form wings.</p>
+<p>Depth gap 3 — Reputation as access. FactionManager was present in the relevant autoload/system set; event drivers and bounty service already reference reputation deltas. Make standings unlock or lock market discounts, job tiers, landing access, patrol support, contraband tolerance, and dialogue options.</p>
+<p>Depth gap 4 — Scanner mastery. The scanner has modes, lock thresholds, sustained-lock timing, decay, and per-mode science payloads. Add mastery by making high-quality scans produce stronger sale multipliers, more precise hazards, rare hints, or faction-specific intel requests.</p>
+<p>Depth gap 5 — Tactical combat goals. Existing weapons include beam, gatling, rocket, plasma, probe/mining/limpet runtimes, heat, ammo, lock, and projectile authority. New depth should come from target priorities, friendly fire, disable/board/salvage choices, defensive escorts, and reinforcements.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/server/server_database.gd</code> creates durable simulation tables for ticks, jobs, markets, routes, trade facts, conflict zones, events, and contribution facts.</li><li><code>scripts/shared/server_runtime_services.gd</code> configures server_simulation_persistence for dedicated server runtime access.</li><li><code>scripts/systems/trade_service.gd</code> reads simulation market snapshots/history and records inventory/trade deltas through simulation persistence.</li><li><code>scripts/level/npc_piracy_event_driver.gd</code> implements the strongest current live-system loop: demand, jettison, cargo collection, disengage, attack, and raider destruction.</li><li><code>scripts/autoload/npc_combat_manager.gd</code> centralizes NPC runtime registration, combat-mode transitions, damage, destruction, groups, and replication snapshots.</li><li><code>scripts/autoload/bounty_hunt_service.gd</code> tracks feed-derived bounty contracts through clues, lead states, job entries, completion, payouts, and reputation deltas.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/autoload/npc_simulation_service.gd — public orchestration interface for active-system actors, runtime-mode requests, hails, task state, cargo/route metadata, and lightweight contacts.</li>
+<li>/home/j/3d-space/scripts/level/npc_piracy_event_driver.gd — full piracy scenario state machine with approach, demand, jettison, collection, disengage, attack, limpet collection, and cargo pod drop logic.</li>
+<li>/home/j/3d-space/scripts/level/faction_conflict_event_driver.gd — combat-zone/event driver for faction-vs-faction battles and player-side contribution recording.</li>
+<li>/home/j/3d-space/scripts/autoload/npc_combat_manager.gd — canonical NPC combat registry, damage entry point, runtime/group combat transitions, and replication snapshots.</li>
+<li>/home/j/3d-space/scripts/level/npc_ship.gd — lightweight/combat/derelict runtime for NPC ships, persona/identity metadata, hull/shield sync, damage, destruction, interaction, and replication.</li>
+<li>/home/j/3d-space/scripts/ai/ai_brain.gd and scripts/ai/ai_context.gd — patrol/pursue/evade/flank/retreat behavior state, target scoring, weapon fire ticks, and combat personality context.</li>
+<li>/home/j/3d-space/scripts/systems/trade_service.gd — player and NPC delivery market actions, simulation market snapshots/history, and trade fact recording.</li>
+<li>/home/j/3d-space/scripts/server/server_database.gd and scripts/server/services/server_simulation_persistence.gd — SQLite schema and persistence methods for ticks, markets, trade facts, conflict zones, simulation events, and contribution facts.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd, scripts/ui/star_scanner_overlay.gd, scripts/resources/star_science_resolver.gd — star-science facet staging and scanner minigame/payload path.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>Pick one “deep loop” to finish end-to-end: pirate demand → choice → combat/cargo outcome → route risk/market/faction update → feed/job-board follow-up.</li>
+<li>Add a small rules table mapping fact types to consequences and UI channels.</li>
+<li>Create debug fixtures that simulate 10 days of trade/piracy/conflict facts and verify markets/jobs/feed visibly change.</li>
+<li>Audit each major action for its consequence payload: missing, local-only, persisted fact, tick-consumed, or player-visible event.</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Space Simulation Layer Audit</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>3D Space Simulation Layer Audit</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-simulation-layer-audit.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Simulation Layer Audit Audit the simulation layer in `/home/j/3d-space` and explain what it currently does, what state it owns, and where it is underused. ## Goal Produce a standalone HTML report that maps the current simulation layer and identifies the highest-value ways to put it to better use. ## Focus questions - What scripts/classes/services make up the simulation layer? - What domain state does it already track: NPC routes, trade deliveries, factions, stations, resources, encounters, economy, popu…</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>The project already has the bones of a rich NPC/simulation layer: active-system NPC orchestration, lightweight-versus-combat runtime promotion, trade facts, conflict facts, public simulation events, and feed projection all exist. The current gap is less “missing architecture” than “missing closed-loop pressure”: many systems can record facts or drive one-off events, but fewer systems visibly feed those outcomes back into persistent faction control, route risk, station scarcity, patrol density, or player-facing mission offers on a predictable cadence.</p>
+<p>The strongest near-term strategy is to standardize the contract between live gameplay events and the strategic tick. Treat piracy, bounty kills, conflict-zone participation, NPC deliveries, and player trading as typed facts; let the nightly/strategic worker consume those facts; then project concise results back to markets, map overlays, feed cards, and job offers.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>The server database schema includes simulation_jobs, simulation_ticks, system_control_state, station_market_state, trade_route_state, market_trade_facts, station_market_history, conflict_zones, simulation_events, and player_contribution_facts, so persistence is already designed for strategic ticks and feed/event outputs.</li>
+<li>ServerRuntimeServices configures server_simulation_persistence on dedicated servers, and TradeService queries that persistence for market snapshots/history and records market trade facts.</li>
+<li>NpcSimulationService and NpcWorldOrchestrator create a clear boundary for active-system NPC contacts, runtime-mode requests, hails, and combat promotion; this is the right façade to avoid game systems reaching into simulation internals.</li>
+<li>NpcCombatManager is already a canonical damage/combat registry, which gives combat events a reliable place to emit facts rather than duplicating kill/assist logic in every mission driver.</li>
+<li>FeedEventService / server_feed_projection_backend can project public simulation_events into story candidates and feed articles, which is a strong user-facing outlet for strategic consequences.</li>
+<li>The audit found multiple rich point systems, but not a single obvious “ledger of outcomes by cause” visible to the player: route disruptions, demand spikes, faction control changes, bounty pressure, and NPC losses need consistent UI surfacing.</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>Keep NpcSimulationService as the live-world façade and ServerRuntimeServices/server_simulation_persistence as the durable fact backend. Do not let every event driver write bespoke tables. Instead, define a small set of simulation fact types: market_trade, cargo_loss, piracy_compliance, piracy_refusal, npc_destroyed, bounty_completed, conflict_kill, conflict_resolution, scan_revelation, and route_delivery.</p>
+<p>The database schema already separates raw facts from projected events. Lean into that split. Raw facts should be append-only, low-level, and hard to lose; simulation_events should be player-facing or system-facing conclusions generated by a tick; feed/event cards should be downstream projections from simulation_events.</p>
+<p>NpcPiracyEventDriver is especially valuable because it touches cargo, dialogue, AI, combat escalation, world drops, and completion. It should become a reference implementation for how a live event records both “what happened” and “why it matters.” For example: compliance should reduce immediate danger but increase local pirate confidence; refusal and pirate destruction should reduce pirate pressure and raise bounty/conflict hooks; cargo recovered by pirates should become a supply-side market fact in pirate stations or black markets.</p>
+<p>The star scanner already creates high-quality, per-mode discovery facets. That discovery pipeline can become a model for simulation facts: deterministic payloads, quality multipliers, staged player state, sale/publish hooks, and feed projection.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/server/server_database.gd</code> creates durable simulation tables for ticks, jobs, markets, routes, trade facts, conflict zones, events, and contribution facts.</li><li><code>scripts/shared/server_runtime_services.gd</code> configures server_simulation_persistence for dedicated server runtime access.</li><li><code>scripts/systems/trade_service.gd</code> reads simulation market snapshots/history and records inventory/trade deltas through simulation persistence.</li><li><code>scripts/level/npc_piracy_event_driver.gd</code> implements the strongest current live-system loop: demand, jettison, cargo collection, disengage, attack, and raider destruction.</li><li><code>scripts/autoload/npc_combat_manager.gd</code> centralizes NPC runtime registration, combat-mode transitions, damage, destruction, groups, and replication snapshots.</li><li><code>scripts/autoload/bounty_hunt_service.gd</code> tracks feed-derived bounty contracts through clues, lead states, job entries, completion, payouts, and reputation deltas.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/autoload/npc_simulation_service.gd — public orchestration interface for active-system actors, runtime-mode requests, hails, task state, cargo/route metadata, and lightweight contacts.</li>
+<li>/home/j/3d-space/scripts/level/npc_piracy_event_driver.gd — full piracy scenario state machine with approach, demand, jettison, collection, disengage, attack, limpet collection, and cargo pod drop logic.</li>
+<li>/home/j/3d-space/scripts/level/faction_conflict_event_driver.gd — combat-zone/event driver for faction-vs-faction battles and player-side contribution recording.</li>
+<li>/home/j/3d-space/scripts/autoload/npc_combat_manager.gd — canonical NPC combat registry, damage entry point, runtime/group combat transitions, and replication snapshots.</li>
+<li>/home/j/3d-space/scripts/level/npc_ship.gd — lightweight/combat/derelict runtime for NPC ships, persona/identity metadata, hull/shield sync, damage, destruction, interaction, and replication.</li>
+<li>/home/j/3d-space/scripts/ai/ai_brain.gd and scripts/ai/ai_context.gd — patrol/pursue/evade/flank/retreat behavior state, target scoring, weapon fire ticks, and combat personality context.</li>
+<li>/home/j/3d-space/scripts/systems/trade_service.gd — player and NPC delivery market actions, simulation market snapshots/history, and trade fact recording.</li>
+<li>/home/j/3d-space/scripts/server/server_database.gd and scripts/server/services/server_simulation_persistence.gd — SQLite schema and persistence methods for ticks, markets, trade facts, conflict zones, simulation events, and contribution facts.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd, scripts/ui/star_scanner_overlay.gd, scripts/resources/star_science_resolver.gd — star-science facet staging and scanner minigame/payload path.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>Create a small SimulationFactWriter wrapper around server_simulation_persistence to centralize fact writes and avoid every system knowing SQL-facing field names.</li>
+<li>Define a daily/strategic tick contract: consume unconsumed market_trade_facts and player_contribution_facts; update route risk, market state, conflict_zones, and system_control_state; emit simulation_events.</li>
+<li>Add debug/admin UI or CLI to inspect recent facts, consumed tick IDs, and emitted simulation_events per system.</li>
+<li>Prioritize one vertical slice: piracy compliance/refusal/destruction → route risk/market stock/faction reputation → feed card/job offer update.</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% if message %}<div class="card message"><strong>{{ message }}</strong></div>{% endif %}
+<div class="grid">
+  <section class="card">
+    <h2>Add inbox item</h2>
+    <form hx-post="/items" hx-target="#dashboard-status" hx-swap="innerHTML" hx-on::after-request="if(event.detail.successful) this.reset()" method="post" class="stack">
+      <label>Title<input name="title" required placeholder="3d-space procedural economy audit"></label>
+      <label>Prompt / brief<textarea name="body" required placeholder="Write the research or analysis request to process overnight..."></textarea></label>
+      <button type="submit">Add to inbox</button>
+    </form>
+  </section>
+
+  <section id="dashboard-status" class="stack" hx-get="/partials/dashboard" hx-trigger="every 20s" hx-swap="innerHTML">
+    {% include "_dashboard_status.html" %}
+  </section>
+</div>

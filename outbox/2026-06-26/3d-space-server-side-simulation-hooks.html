@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server-Side Simulation Hooks for 3D Space</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>Server-Side Simulation Hooks for 3D Space</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-server-side-simulation-hooks.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Server-Side Simulation Hooks Research how the `/home/j/3d-space` simulation layer should hook into main game systems from the server side. ## Goal Produce a standalone HTML report proposing clean server-authoritative integration points between simulation state and live gameplay systems. ## Focus questions - Which main game systems should consume simulation data: trade markets, NPC spawning, ambient traffic, pirate/security encounters, faction reputation, station services, mission generation, map UI, new…</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>The server-side hook surface is already partially in place. Dedicated server startup configures ServerRuntimeServices with server_simulation_persistence; TradeService can query and record simulated market state; FeedEventService can project unconsumed simulation events; NpcCombatManager centralizes authoritative NPC combat/damage. The missing piece is a small, explicit set of hook contracts for live gameplay events to write facts without coupling to database internals.</p>
+<p>The safest design is to use server-authoritative hook points at event completion, damage/destruction, market transaction, scan completion, and route delivery. These should enqueue/record durable facts, not directly mutate strategic state.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>ServerRuntimeServices has set/get_simulation_persistence and configure_for_dedicated_server instantiates server_simulation_persistence.</li>
+<li>server_simulation_persistence writes player_contribution_facts, upserts station_market_state, adjusts station inventory, records market_trade_facts, reads station market history, and exposes conflict feed data.</li>
+<li>server_database schema includes simulation_jobs/ticks, station_market_state/history, trade_route_state, market_trade_facts, conflict_zones, simulation_events, and player_contribution_facts.</li>
+<li>TradeService uses /root/ServerRuntimeServices.get_simulation_persistence() to fetch snapshots and history and to record market changes.</li>
+<li>DedicatedServer calls FeedEventService.project_unconsumed_simulation_events(), meaning simulation_events can already become user-facing feed material.</li>
+<li>NpcCombatManager.apply_damage routes authoritative NPC damage through runtime controllers, making it a good hook point for npc_damaged/npc_destroyed facts.</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>Recommended hook contract: SimulationFactWriter.record_fact(kind: String, scope: Dictionary, subject: Dictionary, value: float, payload: Dictionary) -&gt; Dictionary. The writer should resolve player ID, system ID, faction IDs, route IDs, actor IDs, timestamps, and source event IDs. It should choose the correct persistence method or fallback queue.</p>
+<p>Hook points: 1) TradeService.execute_buy/execute_sell/apply_npc_delivery record market_trade facts with station, route, commodity, quantity, price, and actor/player source. 2) NpcPiracyEventDriver stage transitions record piracy_demand, piracy_compliance, cargo_jettisoned, cargo_collected, piracy_refused, and raider_destroyed. 3) NpcCombatManager.handle_npc_destroyed records npc_destroyed with actor/faction/role/attacker/source event. 4) BountyHuntMissionDriver completion records bounty_completed and reputation payout. 5) FactionConflictEventDriver records conflict_kill and conflict_resolution contributions. 6) DiscoveryManager.stage_star_science_facet records scan_revelation only if a later strategic layer needs exploration pressure.</p>
+<p>Avoid hook side effects that directly update markets/faction control from live code. Live code should record facts and display immediate local outcome. The strategic tick should compute durable economic/faction changes. This prevents mission driver code from becoming a second economy simulator.</p>
+<p>Network authority: Hooks should execute only on the authoritative peer/server. Existing code frequently checks authoritative event mutation and uses server services; keep that pattern. For local/offline play, the same writer can point at local persistence.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/server/server_database.gd</code> creates durable simulation tables for ticks, jobs, markets, routes, trade facts, conflict zones, events, and contribution facts.</li><li><code>scripts/shared/server_runtime_services.gd</code> configures server_simulation_persistence for dedicated server runtime access.</li><li><code>scripts/systems/trade_service.gd</code> reads simulation market snapshots/history and records inventory/trade deltas through simulation persistence.</li><li><code>scripts/level/npc_piracy_event_driver.gd</code> implements the strongest current live-system loop: demand, jettison, cargo collection, disengage, attack, and raider destruction.</li><li><code>scripts/autoload/npc_combat_manager.gd</code> centralizes NPC runtime registration, combat-mode transitions, damage, destruction, groups, and replication snapshots.</li><li><code>scripts/autoload/bounty_hunt_service.gd</code> tracks feed-derived bounty contracts through clues, lead states, job entries, completion, payouts, and reputation deltas.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/autoload/npc_simulation_service.gd — public orchestration interface for active-system actors, runtime-mode requests, hails, task state, cargo/route metadata, and lightweight contacts.</li>
+<li>/home/j/3d-space/scripts/level/npc_piracy_event_driver.gd — full piracy scenario state machine with approach, demand, jettison, collection, disengage, attack, limpet collection, and cargo pod drop logic.</li>
+<li>/home/j/3d-space/scripts/level/faction_conflict_event_driver.gd — combat-zone/event driver for faction-vs-faction battles and player-side contribution recording.</li>
+<li>/home/j/3d-space/scripts/autoload/npc_combat_manager.gd — canonical NPC combat registry, damage entry point, runtime/group combat transitions, and replication snapshots.</li>
+<li>/home/j/3d-space/scripts/level/npc_ship.gd — lightweight/combat/derelict runtime for NPC ships, persona/identity metadata, hull/shield sync, damage, destruction, interaction, and replication.</li>
+<li>/home/j/3d-space/scripts/ai/ai_brain.gd and scripts/ai/ai_context.gd — patrol/pursue/evade/flank/retreat behavior state, target scoring, weapon fire ticks, and combat personality context.</li>
+<li>/home/j/3d-space/scripts/systems/trade_service.gd — player and NPC delivery market actions, simulation market snapshots/history, and trade fact recording.</li>
+<li>/home/j/3d-space/scripts/server/server_database.gd and scripts/server/services/server_simulation_persistence.gd — SQLite schema and persistence methods for ticks, markets, trade facts, conflict zones, simulation events, and contribution facts.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd, scripts/ui/star_scanner_overlay.gd, scripts/resources/star_science_resolver.gd — star-science facet staging and scanner minigame/payload path.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>Implement SimulationFactWriter as a RefCounted service under scripts/server/services or scripts/systems, with a test double-friendly interface.</li>
+<li>Add one method per fact family only if needed: record_market_trade, record_player_contribution, record_route_event, record_piracy_event; keep generic payload JSON for detail.</li>
+<li>Add tests proving hooks are no-ops without ServerRuntimeServices and write exactly one fact on authoritative completion.</li>
+<li>Expose a developer command/report for recent unconsumed facts by system/route/faction.</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star Scanning Minigame UX Audit</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>Star Scanning Minigame UX Audit</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-star-scanning-minigame-ux-audit.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Star Scanning Mini-Game UX Audit Audit the star scanning mini-games in `/home/j/3d-space`, including X-ray, radio, optical, and any other scan types currently implemented or planned in code/data. ## Goal Produce a standalone HTML report that explains how the current scanning mini-games work, where they are confusing, and how to make each scan type easier for players to understand. ## Focus questions - What scan types exist today in code, resources, UI scenes, input mappings, or design docs? - How does e…</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>The star scanner is feature-rich but risks overwhelming players because the scientific controls, meters, lock threshold, alignment validity, mode switching, and external HUD suppression all happen at once. The UX should emphasize a small repeated pattern: pick a mode, tune three controls, watch meters, hold lock, receive a readable finding.</p>
+<p>The implementation has good hooks for improvement: quality details, mode meters, directions text, scan_mode_changed, scanner_opened/closed, and DiscoveryManager staging. The audit recommends better hierarchy and result communication rather than wholesale rewrites.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>The scanner UI is built dynamically in StarScannerOverlay._build_ui with a mode label, mode buttons, status label, directions toggle, meter rows, control rows, and readout label.</li>
+<li>Status states distinguish no valid target, alignment lost, scan archived, and tune sustained lock.</li>
+<li>Meter rows show Signal, Noise, Lock, Progress, plus mode-specific meters from quality details.</li>
+<li>Control rows show mode-specific labels: Wavelength/Focus/Gain, Frequency/Bandwidth/Squelch, Baseline/Phase/Delay, Exposure/Gate/Shield Bias.</li>
+<li>The readout currently summarizes LOCKED/ACTIVE, control names, and Quality %. This is useful but not enough to explain next action.</li>
+<li>HudOverlay suppresses regular HUD chrome while scanner is active and enables ScannerVisionOverlay, which helps focus but also removes ambient context.</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>UX issue 1 — Objective clarity. The current status text “tune sustained lock” is concise but not instructive for first use. Add a persistent objective line: “Raise Lock above 82%, then hold alignment until Progress fills.” This should remain visible even when directions are collapsed.</p>
+<p>UX issue 2 — Meter meaning. Signal/Noise/Lock/Progress are readable, but mode-specific meters need interpretation. Add a small hint under the worst meter: “Noise Floor high: raise Squelch” or “Phase Error high: adjust Phase/Delay.” The evaluators already return mode_meters; map meter names to likely controls.</p>
+<p>UX issue 3 — Directions panel size. The panel increases the scanner panel offset from 238 to 350. That is useful, but the expanded panel should not hide essential meters on smaller screens. Consider a side panel or compact tooltip layout.</p>
+<p>UX issue 4 — Completion feedback. scan_completed is emitted and DiscoveryManager stages data, but the scanner should show a result summary card: mode, quality, fields revealed, sale/value effect, and next recommended mode.</p>
+<p>UX issue 5 — Archived scans. “scan archived” tells the player a mode is done, but not whether all modes are done or what remains. Add mode buttons with completed checkmarks and a “2/4 analyses complete” header.</p>
+<p>UX issue 6 — Alignment loss. Alignment validity is updated from HudOverlay by comparing current scanner context to reticle/target. When alignment is lost, show a reticle arrow or “re-center target” prompt rather than only pausing/decaying progress.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/ui/star_scanner_overlay.gd</code> declares scanner_opened/scanner_closed/scan_mode_changed, LOCK_THRESHOLD 0.82, LOCK_SECONDS_REQUIRED 1.35, four mode configs, quality evaluators, dynamic UI, directions panel, and scan_completed payload.</li><li><code>scripts/resources/star_science_resolver.gd</code> defines MODE_OPTICAL, MODE_RADIO, MODE_INTERFEROMETRY, MODE_XRAY and builds deterministic per-mode payload fields.</li><li><code>scripts/effects/scanner_vision_overlay.gd</code> maps scan modes to tint/mode_index/effect uniforms and receives quality from HUD scanner signals.</li><li><code>scripts/ui/hud_overlay.gd</code> opens the scanner via flight_star_scanner, suppresses regular HUD chrome, keeps alignment valid, and stages completed scans through DiscoveryManager.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/ui/star_scanner_overlay.gd — four scan modes, lock-quality evaluators, controls, direction panel, drawn visualizations, lock progress, and scan_completed payload.</li>
+<li>/home/j/3d-space/scripts/resources/star_science_resolver.gd — mode definitions and deterministic science payload generation for optical, radio, interferometry, and X-ray facets.</li>
+<li>/home/j/3d-space/scripts/effects/scanner_vision_overlay.gd — post-process mode tint/uniform mapping for optical/radio/interferometry/X-ray scanner vision.</li>
+<li>/home/j/3d-space/scripts/ui/hud_overlay.gd — scanner overlay instantiation, HUD suppression, alignment checks, scanner-vision effect, and DiscoveryManager staging hook.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd — stage_star_science_facet validation, payload construction, sale-value quality multiplier, and client-side facet proposal path.</li>
+<li>/home/j/3d-space/test/integration/test_star_scanner_overlay.gd and test/integration/test_discovery_subject_facets.gd — integration coverage for scanner completion and star science facets.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>Add a constant objective label above meters.</li>
+<li>Add completed checkmarks and count to mode tabs.</li>
+<li>Build a compact result summary using StarScienceResolver payload keys.</li>
+<li>Map each mode meter to one likely control hint and show the worst-limiter hint below the readout.</li>
+<li>Test scanner panel layout at common resolutions and with directions open.</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

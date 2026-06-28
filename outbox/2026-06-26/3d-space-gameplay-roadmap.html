@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Space Gameplay Roadmap</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>3D Space Gameplay Roadmap</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-gameplay-roadmap.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Gameplay Improvement Roadmap Create a practical implementation roadmap for improving gameplay depth in `/home/j/3d-space`. ## Goal Turn the gameplay improvement and depth-gap analysis into an actionable roadmap that prioritizes features by leverage and sequencing. ## Constraints - Prefer building on existing foundations rather than inventing disconnected systems. - Favor visible player-facing improvements early. - Respect likely Godot/networking complexity: avoid recommendations that require fragile rew…</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>A practical roadmap should avoid sprawling new architecture. The repository already contains the key foundations: NPC simulation service, combat runtime promotion, trade persistence, conflict events, bounty service, feed projection, star-science discovery, active jobs UI, and weapon systems. The roadmap should sequence these into vertical slices that prove the game loop.</p>
+<p>Recommended order: first make consequences visible, then connect live events to simulation facts, then deepen missions, then expand strategic ticks. This delivers player value early while reducing integration risk.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>The strongest vertical slice is piracy/economy/faction because NpcPiracyEventDriver already touches dialogue, cargo, NPC AI, combat escalation, cargo drops, and completion states.</li>
+<li>Bounty hunts are a good second slice because BountyHuntService already starts from feed articles, tracks clue stages, creates active jobs, and resolves rewards/reputation.</li>
+<li>Faction conflict is a good third slice because conflict event drivers and simulation persistence already include contribution facts and conflict_resolved simulation events.</li>
+<li>Star scanning is a fourth slice because it is comparatively self-contained and already plugs into DiscoveryManager. It can unlock exploration job variety without depending on the whole economy loop.</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>Phase 1: Consequence UI and fact-writing hygiene. Add a shared SimulationFactWriter, standard event-completion summaries, and a Recent Consequences feed. Instrument piracy, trade buys/sells, bounty completions, and conflict kills. Do not alter strategic rules yet; just make raw facts reliable and visible to developers.</p>
+<p>Phase 2: Piracy route-pressure loop. On compliance, refusal, raider destruction, and cargo collection, write typed facts. Strategic tick consumes facts to update route risk and maybe station shortages/surpluses. Feed projection emits “Pirate activity rising/falling” and job board offers escorts, bounties, or anti-pirate raids.</p>
+<p>Phase 3: Bounty/rumor loop. Wanted feed article → track bounty → clue scan/locate → target spawn → combat or scan resolution → payout/reputation → feed follow-up. Add variants where targets flee, have escorts, hide near belts, or require star/system scan clues.</p>
+<p>Phase 4: Faction control loop. Conflict-zone contributions and NPC losses affect conflict_zones and system_control_state. The player can see frontlines, choose sides, receive faction access, and trigger patrol/reinforcement changes.</p>
+<p>Phase 5: Exploration commerce loop. Star-science facets reveal hazards/metallicity/activity/companion hints. High-quality scans become sellable intel, station requests, faction research contracts, and map warnings.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/server/server_database.gd</code> creates durable simulation tables for ticks, jobs, markets, routes, trade facts, conflict zones, events, and contribution facts.</li><li><code>scripts/shared/server_runtime_services.gd</code> configures server_simulation_persistence for dedicated server runtime access.</li><li><code>scripts/systems/trade_service.gd</code> reads simulation market snapshots/history and records inventory/trade deltas through simulation persistence.</li><li><code>scripts/level/npc_piracy_event_driver.gd</code> implements the strongest current live-system loop: demand, jettison, cargo collection, disengage, attack, and raider destruction.</li><li><code>scripts/autoload/npc_combat_manager.gd</code> centralizes NPC runtime registration, combat-mode transitions, damage, destruction, groups, and replication snapshots.</li><li><code>scripts/autoload/bounty_hunt_service.gd</code> tracks feed-derived bounty contracts through clues, lead states, job entries, completion, payouts, and reputation deltas.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/autoload/npc_simulation_service.gd — public orchestration interface for active-system actors, runtime-mode requests, hails, task state, cargo/route metadata, and lightweight contacts.</li>
+<li>/home/j/3d-space/scripts/level/npc_piracy_event_driver.gd — full piracy scenario state machine with approach, demand, jettison, collection, disengage, attack, limpet collection, and cargo pod drop logic.</li>
+<li>/home/j/3d-space/scripts/level/faction_conflict_event_driver.gd — combat-zone/event driver for faction-vs-faction battles and player-side contribution recording.</li>
+<li>/home/j/3d-space/scripts/autoload/npc_combat_manager.gd — canonical NPC combat registry, damage entry point, runtime/group combat transitions, and replication snapshots.</li>
+<li>/home/j/3d-space/scripts/level/npc_ship.gd — lightweight/combat/derelict runtime for NPC ships, persona/identity metadata, hull/shield sync, damage, destruction, interaction, and replication.</li>
+<li>/home/j/3d-space/scripts/ai/ai_brain.gd and scripts/ai/ai_context.gd — patrol/pursue/evade/flank/retreat behavior state, target scoring, weapon fire ticks, and combat personality context.</li>
+<li>/home/j/3d-space/scripts/systems/trade_service.gd — player and NPC delivery market actions, simulation market snapshots/history, and trade fact recording.</li>
+<li>/home/j/3d-space/scripts/server/server_database.gd and scripts/server/services/server_simulation_persistence.gd — SQLite schema and persistence methods for ticks, markets, trade facts, conflict zones, simulation events, and contribution facts.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd, scripts/ui/star_scanner_overlay.gd, scripts/resources/star_science_resolver.gd — star-science facet staging and scanner minigame/payload path.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>Milestone A: “Every live event ends with a visible consequence card.”</li>
+<li>Milestone B: “Piracy changes route risk and job offers within one simulated tick.”</li>
+<li>Milestone C: “Bounty hunts begin in feed, resolve in combat, and create follow-up feed/reputation.”</li>
+<li>Milestone D: “Star scanner findings unlock at least three station job variants.”</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

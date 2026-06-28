@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3d-space Constellation Navigation with Billboard Heroes and Star Impostors</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+th, td { border: 1px solid var(--border); padding: 0.55rem 0.7rem; vertical-align: top; }
+th { color: var(--accent); text-align: left; background: color-mix(in srgb, var(--code) 70%, transparent); }
+.badge { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:0.05rem 0.5rem; color:var(--muted); font-size:0.85rem; }
+.small { color: var(--muted); font-size: 0.92rem; }
+</style>
+</head>
+<body>
+<main><article>
+<h1>3d-space Constellation Navigation with Billboard Heroes and Star Impostors</h1>
+<div class="meta">
+  <div><strong>Generated:</strong> 2026-06-27 10:54 ADT (2026-06-27T10:54:48-03:00)</div>
+  <div><strong>Original inbox file:</strong> 2026-06-27-3d-space-constellation-navigation-billboard-heroes.md</div>
+  <div><strong>Source prompt excerpt:</strong> # 3d-space constellation navigation with billboard heroes and star impostors Research and design how the `/home/j/3d-space/` project can use its existing billboard hero / far-impostor systems to represent navigable constellations across star systems. The goal is to make constellations feel like distant destination landmarks that the player can steer toward, while the closest range — being inside one member system — c…</div>
+</div>
+
+<h2>Executive Summary</h2>
+<p>Use constellations as <strong>regional navigation-scale hero landmarks</strong>, not as literal nearby meshes. A constellation should be a deterministic data object that binds several real star systems, a 2D/3D asterism pattern, navigation metadata, and billboard/impostor visual presets. From far away the player sees one stylized billboard hero. As distance and approach increase, the shader reveals named anchors, lanes, and brighter member stars. When the player is inside one member system, that system's real primary star is one member of the constellation; all other members are rendered as fake far star impostors placed on the local sky pattern.</p>
+<ul>
+<li><strong>Best model:</strong> region-level <code>ConstellationDefinition</code> plus per-system runtime projection state.</li>
+<li><strong>Best rendering path:</strong> extend the existing billboard hero manifest architecture from <code>docs/done/billboard_hero_tasks.md</code>; do not invent a separate renderer.</li>
+<li><strong>Closest-range rule:</strong> exactly one real member star is the current system's actual primary/binary component; every other visible point is an impostor using the regular/exotic far-impostor pipeline.</li>
+<li><strong>Player promise:</strong> every highlighted point that receives a label/target affordance must correspond to a reachable system or a clearly marked lore-only mirage.</li>
+</ul>
+
+<h2>Design Model</h2>
+<p>The constellation should be generated at a larger scale than an individual system, then projected into each member system. Store enough information for deterministic regeneration from galaxy seed and coordinates, while avoiding cross-system runtime synchronization.</p>
+<pre><code>class_name ConstellationDefinition
+var id: StringName
+var display_name: String
+var anchor_coords: Vector3i
+var influence_distance: float
+var member_system_ids: Array[StringName]
+var member_coords: Array[Vector3i]
+var member_star_types: Array[StringName]
+var pattern_points: Array[Vector2]       # normalized asterism layout
+var pattern_edges: Array[Vector2i]       # line indices into pattern_points
+var visual_preset: StringName            # constellation_cluster, shattered_cluster, rogue_stream
+var navigation_role: StringName          # route_hint, faction_marker, pilgrimage, puzzle, hidden_chain
+var rarity_tier: int
+var seed_variant: int
+var faction_id: StringName
+var label_rules: Dictionary
+</code></pre>
+<pre><code>class_name ConstellationRuntimeState
+var constellation_id: StringName
+var current_member_index: int = -1
+var real_member_star_type: StringName
+var impostor_members: Array[Dictionary]
+var reveal: float
+var apparent_scale: float
+var approach: float
+var same_system: bool
+var selected_target_index: int = -1
+</code></pre>
+<p>Recommended manifest fields extend the current billboard hero entry rather than replacing it:</p>
+<pre><code>{
+  "phenomenon_type": &amp;"named_constellation",
+  "visual_family": &amp;"constellation",
+  "anchor_coords": Vector3i(...),
+  "facing_direction": Vector3(...),
+  "influence_distance": 32.0,
+  "reveal": 0.72,
+  "apparent_scale": 1.35,
+  "intensity": 0.9,
+  "seed_variant": 10421,
+  "promotion_capable": true,
+  "real_member_star_type": &amp;"k_dwarf",
+  "impostor_star_type": &amp;"b_star",
+  "impostor_position_in_pattern": Vector2(0.31, 0.78),
+  "pattern_edge_visibility": 0.65,
+  "navigation_target_system_id": &amp;"sys_0412_7f",
+  "scan_label": "The Harp: blue anchor reachable",
+  "approach_stage": &amp;"mid"
+}</code></pre>
+
+<h2>Visual Model by Range</h2>
+<ul>
+<li><strong>Galaxy / map scale:</strong> thin constellation glyph, named region badge, optional route chain. Use low-frequency icons; avoid star-field noise.</li>
+<li><strong>Far system sky:</strong> one billboard hero using the existing <code>billboard_hero_constellation.gdshader</code>. Show broad lane/trail, faint pattern points, no exact targeting except scan hint.</li>
+<li><strong>Mid range / repeated jumps toward it:</strong> increase <code>reveal</code>, <code>apparent_scale</code>, <code>stage</code>, and edge visibility. Anchor stars separate from decorative background speckles. A scan can name 1-3 reachable member points.</li>
+<li><strong>Near member approach:</strong> brightest target point blooms in the destination star color. Lines become route hints rather than physical filaments.</li>
+<li><strong>Same-system closest range:</strong> the local star scene is real. Other member stars use far impostor nodes/billboards pinned to the projected pattern with spectral color, bloom, flare shape, and a tiny parallax hint, but no full physical duplicate bodies.</li>
+</ul>
+
+<h2>Closest-Range Behavior</h2>
+<p>Resolve membership before rendering: if the active system ID equals <code>member_system_ids[i]</code>, set <code>current_member_index = i</code> and force the real star recipe to match <code>member_star_types[i]</code> within allowed stellar-generation constraints. For binaries, allow the constellation member to bind to the primary unless the definition explicitly marks a secondary. All other members become impostors:</p>
+<ul>
+<li>Use <code>RegularStarFarImpostor</code> for O/B/A/F/G/K/M and giant variants, and <code>ExoticStarFarImpostor</code> for neutron/black-hole/dark-star-style members.</li>
+<li>Place impostors by projecting <code>pattern_points</code> onto a local sky plane in the constellation facing direction, not by spawning far physical systems.</li>
+<li>Scale brightness from intended apparent magnitude, current member relationship, and accessibility state. Reachable targets get a stable scan label; decorative support stars stay unlabeled.</li>
+<li>Do not allow impostors to cast local shadows, affect gravity, or create collision/hazard volumes unless the player jumps to that member system.</li>
+</ul>
+
+<h2>Procedural Generation Rules</h2>
+<ol>
+<li><strong>Region selection:</strong> sample rare constellation anchors from galactic coordinates; bias to faction borders, old clusters, pilgrimage paths, nebula edges, or hidden-system chains.</li>
+<li><strong>Member count:</strong> 3-7 reachable members for gameplay readability; add optional decorative minor points only in shader.</li>
+<li><strong>Pattern grammar:</strong> choose from line, hook, crown, gate, spiral, broken triangle, river/stream, and shattered cluster templates. Then jitter points deterministically.</li>
+<li><strong>Star type budget:</strong> require at least one visually distinct color contrast, e.g. K/G anchor plus B/A bright point, or M dwarf plus white dwarf remnant. Keep exotic members very rare.</li>
+<li><strong>Rarity:</strong> most systems should have none; a region may contain one landmark constellation and a few local decorative clusters.</li>
+<li><strong>Stability:</strong> derive all IDs, member indices, and visual seed variants from galaxy seed + anchor coords + sorted member coords. Save only discovery/label state.</li>
+</ol>
+
+<h2>Godot Implementation Plan</h2>
+<ul>
+<li><strong>Shared evaluator:</strong> extend the planned shared hero semantic evaluator in <code>scripts/systems/</code> so it can emit <code>constellation_id</code>, member index, pattern data, and reachable target metadata alongside existing <code>anchor_coords</code>, <code>facing_direction</code>, <code>influence_distance</code>, <code>reveal</code>, <code>apparent_scale</code>, <code>intensity</code>, <code>seed_variant</code>, and <code>promotion_capable</code>.</li>
+<li><strong>Manifest mapper:</strong> add a constellation-aware manifest builder called by <code>ProceduralSystem</code> after system recipe generation.</li>
+<li><strong>Backdrop controller:</strong> keep one billboard quad for far/mid stage and spawn child impostor quads only for same-system stage or scan-focus overlays.</li>
+<li><strong>Star recipe integration:</strong> when generating a member system, pass the constellation member star type as a constraint into regular/exotic star selection; fail closed by dropping the constellation if the recipe cannot satisfy constraints.</li>
+<li><strong>Showcase:</strong> add named examples to <code>scripts/debug/billboard_hero_showcase.gd</code>: route constellation, shattered remnant asterism, rogue stream, and same-system member impostor layout.</li>
+</ul>
+
+<h2>Shader / Material Recommendations</h2>
+<ul>
+<li>Keep <code>billboard_hero_constellation.gdshader</code> as the first family. It already exposes <code>star_density</code>, <code>lane_strength</code>, <code>trail_strength</code>, <code>twinkle_strength</code>, <code>reveal</code>, <code>stage</code>, and <code>approach</code>.</li>
+<li>Add pattern support without large uniform arrays: encode up to 8 member points and edges in a small 1D lookup texture or packed <code>vec4 pattern_points_0..3</code> uniforms for V1.</li>
+<li>Separate <em>decorative star noise</em> from <em>member anchor stars</em>. Member anchors need stable positions, sizes, labels, and target hit proxies.</li>
+<li>Add uniforms: <code>member_count</code>, <code>selected_member_index</code>, <code>edge_visibility</code>, <code>label_pulse</code>, <code>route_hint_strength</code>, <code>same_system_member_index</code>.</li>
+<li>For accessibility, support a high-contrast mode where edges and anchor stars are hue-separated from the background sky.</li>
+</ul>
+
+<h2>Navigation UX Recommendations</h2>
+<ul>
+<li>Scanning the hero reveals: constellation name, nearest member, current-member status, and 1-2 reachable points.</li>
+<li>Focus cycling should snap between anchor points, not decorative stars. The selected anchor pulses and displays distance/jump count.</li>
+<li>Map and backdrop must use the same pattern orientation; if the sky projection is stylized, label it as a navigational projection.</li>
+<li>Use verbs carefully: “Aligned with The Harp / Blue Anchor reachable” is safer than “the star is physically ahead 4 ly” unless the route solver confirms it.</li>
+</ul>
+
+<h2>Risks and Pitfalls</h2>
+<ul>
+<li><strong>Parallax confusion:</strong> fake same-system impostors must not look like nearby physical suns.</li>
+<li><strong>Unreachable decoration:</strong> never give target affordances to non-member shader speckles.</li>
+<li><strong>Clutter:</strong> cap hero landmarks per sky direction; constellation edges should fade behind brighter local phenomena.</li>
+<li><strong>Save determinism:</strong> persist discovered labels, not generated pattern geometry.</li>
+<li><strong>Over-promising astronomy:</strong> real constellations are line-of-sight projections; game constellations are deliberate navigable asterisms.</li>
+</ul>
+
+<h2>Prioritized Implementation Tasks</h2>
+<ol>
+<li>Create <code>ConstellationDefinition</code> and deterministic generator with 3-5 template shapes.</li>
+<li>Extend hero manifest entries with constellation metadata and same-system flags.</li>
+<li>Teach regular/exotic star generation to accept a constellation member type constraint.</li>
+<li>Add stable member anchors/edges to <code>billboard_hero_constellation.gdshader</code>.</li>
+<li>Build same-system impostor projection using existing far-impostor scenes.</li>
+<li>Add scan/focus UX and debug overlay.</li>
+<li>Add GUT tests: member star type equals local real star; impostor count equals <code>member_count - 1</code>; generated definition is stable across jumps; unlabeled decorative points are not targetable.</li>
+</ol>
+
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>IAU constellation background and sky-region concept: <a href="https://www.iau.org/public/themes/constellations/">iau.org/public/themes/constellations/</a></li>
+<li>NASA star types reference for member spectral color constraints: <a href="https://science.nasa.gov/universe/stars/types/">science.nasa.gov/universe/stars/types/</a></li>
+<li>Project files inspected: <code>docs/done/billboard_hero_tasks.md</code>, <code>scripts/debug/billboard_hero_showcase.gd</code>, <code>shaders/billboard_heroes/billboard_hero_constellation.gdshader</code>, <code>test/integration/test_star_impostor_showcases.gd</code>.</li>
+</ul>
+
+<div class="footer">Generated by the While I Sleep queue runner. Standalone HTML: no required external assets.</div>
+</article></main>
+</body></html>

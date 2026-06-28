@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turning Simulation into Gameplay Loops</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>Turning Simulation into Gameplay Loops</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-simulation-to-gameplay-loops.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Turn Simulation Into Gameplay Loops Explore how `/home/j/3d-space` can use its simulation layer to create richer player-facing gameplay loops. ## Goal Produce a standalone HTML report identifying concrete gameplay loops driven by server-side simulation rather than isolated scripted events. ## Candidate loops to evaluate - Dynamic trade: simulation changes supply/demand, prices, shortages, surpluses, station needs, and route opportunities. - Piracy/security: simulated cargo movement and faction/security …</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>The game can turn its simulation layer into compelling gameplay by making each simulation state imply a player action and each player action imply a later simulation change. The codebase already contains candidate loop endpoints: station markets, active jobs, feed articles, NPC piracy events, bounty hunts, conflict zones, star scanning, and discovery facets.</p>
+<p>The design target should be small loops with clear verbs: trade, escort, scan, hunt, comply, fight, salvage, report, and choose a side. Each loop should have an immediate reward and a delayed systemic consequence.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>Market loop: TradeService queries station_market_state/history and records market_trade_facts, so price/inventory trends can become jobs and route choices.</li>
+<li>Piracy loop: NpcPiracyEventDriver already has demand, jettison, cargo collection, attack, disengage, and cargo pod recovery logic, making it a complete encounter loop waiting for strategic consequences.</li>
+<li>Bounty loop: Feed articles can be tracked into bounty contracts, clues, lead locations, final target actors, payouts, and reputation changes.</li>
+<li>Conflict loop: Faction conflict drivers can spawn faction-aligned actors, track kills/contributions, and record simulation contribution facts.</li>
+<li>Exploration loop: StarScannerOverlay emits per-mode scan completions, DiscoveryManager stages star-science facets, and sale value can scale by quality.</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>Loop 1 — Scarcity trade. Simulation tick identifies shortage at Station A and surplus at Station B. Feed/job board publishes delivery request. Player transports goods. TradeService records market_trade_facts. Tick reduces shortage, updates route profit/risk, and emits a “shortage eased” event.</p>
+<p>Loop 2 — Pirate pressure. Route disruptions raise pirate activity. Job board offers escort/bounty/patrol. Player encounters pirates. Compliance preserves life but feeds pirate cargo success; fighting can lower pirate pressure and improve patrol confidence; failing raises market prices and route risk.</p>
+<p>Loop 3 — Bounty rumor. Feed article identifies a wanted pilot. Player tracks it, follows clue stages, locates the lead, scans or fights the target, and receives payout/reputation. Simulation then lowers pirate pressure or shifts faction conflict depending on target faction.</p>
+<p>Loop 4 — Faction frontline. conflict_zones create offers for either side. Player kills or protects actors. Contributions affect control state. Feed announces victories. Stations adjust access, prices, or patrol behavior based on control.</p>
+<p>Loop 5 — Scanner survey. Station/faction asks for optical/radio/interferometry/X-ray data. Player performs scanner minigame. Higher quality increases payout and precision. Findings unlock hazards, rare materials, companion hints, or research follow-ups.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/server/server_database.gd</code> creates durable simulation tables for ticks, jobs, markets, routes, trade facts, conflict zones, events, and contribution facts.</li><li><code>scripts/shared/server_runtime_services.gd</code> configures server_simulation_persistence for dedicated server runtime access.</li><li><code>scripts/systems/trade_service.gd</code> reads simulation market snapshots/history and records inventory/trade deltas through simulation persistence.</li><li><code>scripts/level/npc_piracy_event_driver.gd</code> implements the strongest current live-system loop: demand, jettison, cargo collection, disengage, attack, and raider destruction.</li><li><code>scripts/autoload/npc_combat_manager.gd</code> centralizes NPC runtime registration, combat-mode transitions, damage, destruction, groups, and replication snapshots.</li><li><code>scripts/autoload/bounty_hunt_service.gd</code> tracks feed-derived bounty contracts through clues, lead states, job entries, completion, payouts, and reputation deltas.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/autoload/npc_simulation_service.gd — public orchestration interface for active-system actors, runtime-mode requests, hails, task state, cargo/route metadata, and lightweight contacts.</li>
+<li>/home/j/3d-space/scripts/level/npc_piracy_event_driver.gd — full piracy scenario state machine with approach, demand, jettison, collection, disengage, attack, limpet collection, and cargo pod drop logic.</li>
+<li>/home/j/3d-space/scripts/level/faction_conflict_event_driver.gd — combat-zone/event driver for faction-vs-faction battles and player-side contribution recording.</li>
+<li>/home/j/3d-space/scripts/autoload/npc_combat_manager.gd — canonical NPC combat registry, damage entry point, runtime/group combat transitions, and replication snapshots.</li>
+<li>/home/j/3d-space/scripts/level/npc_ship.gd — lightweight/combat/derelict runtime for NPC ships, persona/identity metadata, hull/shield sync, damage, destruction, interaction, and replication.</li>
+<li>/home/j/3d-space/scripts/ai/ai_brain.gd and scripts/ai/ai_context.gd — patrol/pursue/evade/flank/retreat behavior state, target scoring, weapon fire ticks, and combat personality context.</li>
+<li>/home/j/3d-space/scripts/systems/trade_service.gd — player and NPC delivery market actions, simulation market snapshots/history, and trade fact recording.</li>
+<li>/home/j/3d-space/scripts/server/server_database.gd and scripts/server/services/server_simulation_persistence.gd — SQLite schema and persistence methods for ticks, markets, trade facts, conflict zones, simulation events, and contribution facts.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd, scripts/ui/star_scanner_overlay.gd, scripts/resources/star_science_resolver.gd — star-science facet staging and scanner minigame/payload path.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>For every loop, document input state → offered action → live encounter → fact output → strategic state change → UI projection.</li>
+<li>Add one field to job entries: “Simulation reason,” e.g. shortage, pirate pressure, faction request, scientific anomaly.</li>
+<li>Make failure outcomes intentional: lost cargo, escaped bounty, low-quality scan, or faction defeat should still update simulation and create new opportunities.</li>
+<li>Favor reusable encounter modifiers over bespoke missions: route risk, faction hostility, cargo value, star hazard, and clue stage.</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

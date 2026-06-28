@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}While I Sleep{% endblock %}</title>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <style>
+    :root { color-scheme: dark; --bg:#0f1220; --panel:#171a2c; --panel2:#111526; --muted:#a9b1d6; --text:#e6e8f5; --accent:#7aa2f7; --good:#9ece6a; --warn:#e0af68; --border:#2b3151; --danger:#f7768e; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; background: radial-gradient(circle at top left, #18203a, var(--bg) 38rem); color:var(--text); }
+    header.top { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); background: rgba(15,18,32,.82); position: sticky; top: 0; backdrop-filter: blur(12px); z-index: 2; }
+    main { max-width: 1240px; margin: 0 auto; padding: 1.5rem; }
+    h1, h2, h3 { margin-top: 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .grid { display:grid; grid-template-columns: minmax(320px, .8fr) minmax(420px, 1.2fr); gap: 1rem; align-items:start; }
+    .card { background: linear-gradient(180deg, rgba(23,26,44,.98), rgba(17,21,38,.98)); border: 1px solid var(--border); border-radius: 16px; padding: 1rem 1.15rem; box-shadow: 0 12px 40px rgba(0,0,0,.18); }
+    .stack { display:flex; flex-direction:column; gap: 1rem; }
+    .row { display:flex; gap:.7rem; align-items:center; flex-wrap:wrap; }
+    .muted { color: var(--muted); }
+    .badge { display:inline-block; padding:.2rem .52rem; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:.85rem; background:rgba(255,255,255,.025); }
+    .message { border-color: rgba(158,206,106,.5); color: var(--good); }
+    input, textarea { width:100%; background:#0b1020; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:.75rem; font: inherit; }
+    textarea { min-height: 15rem; resize: vertical; }
+    button { cursor:pointer; background: var(--accent); color:#08111f; border:0; border-radius:10px; padding:.7rem 1rem; font-weight:700; }
+    button.secondary { background:#242a46; color:var(--text); border:1px solid var(--border); }
+    ul.clean { list-style:none; padding:0; margin:.5rem 0 0; }
+    ul.clean li { padding:.55rem 0; border-top:1px solid rgba(255,255,255,.06); }
+    .report-day { display:grid; grid-template-columns: 8rem 1fr; gap:.8rem; padding:.65rem 0; border-top:1px solid rgba(255,255,255,.06); }
+    .report-list { margin:0; padding-left:1.2rem; }
+    .tabs { display:flex; gap:.5rem; margin-bottom:1rem; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } header.top { position: static; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="row"><h1 style="margin:0">While I Sleep</h1><span class="badge">filesystem queue</span><a href="/">Dashboard</a><a href="/static-outbox/">Static index</a></div>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>

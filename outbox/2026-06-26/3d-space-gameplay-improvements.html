@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Space Gameplay Improvements: High-Impact Additions</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>3D Space Gameplay Improvements: High-Impact Additions</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-gameplay-improvements.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Biggest Gameplay Improvements Research the `/home/j/3d-space` Godot project and identify the biggest gameplay improvements we can add next. ## Goal Produce a standalone HTML report that ranks the highest-leverage gameplay additions by player impact, implementation feasibility, and fit with the existing codebase. ## Focus questions - What systems already exist in the codebase that are underused or not exposed as player-facing gameplay? - Which additions would make the game feel meaningfully deeper withou…</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>The project has many technically capable systems, but the biggest gameplay opportunity is to make them legible, consequential, and repeatable. The fastest improvements are not new mechanics in isolation; they are clearer feedback loops tying NPC actions, player decisions, economy state, and faction consequences together.</p>
+<p>Focus on three player promises: “my choices changed this system,” “NPCs are doing things even when I am not watching,” and “my tools reveal new actionable options.” The current codebase already supports each promise if the systems are connected with visible status, rewards, and consequences.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>Piracy is unusually complete as a scenario: raiders spawn, hail/demand, wait for jettison, collect cargo with limpets/pods, disengage, or attack. It should be surfaced as a flagship emergent encounter rather than a hidden event.</li>
+<li>BountyHuntService already supports trackable feed articles, contract status, staged clues, lead locating, completion, payouts, reputation deltas, and active job entries. This can become a strong mission spine with richer on-site variation.</li>
+<li>The weapons stack supports lasers, gatling, rockets, plasma, mining, limpets, probes, ammo, cooldown, heat, overheat, lock cone, projectile scenes, and multiplayer authority hooks. Combat can be deepened by adding encounter composition and target behavior rather than inventing weapon plumbing.</li>
+<li>The star scanner has four modes and real input/lock mechanics. Its UX can be tuned into an exploration skill check that feeds discovery value and system knowledge.</li>
+<li>ActiveJobsHudController and JobBoardPresenter are useful convergence points for “what should I do next,” but they need to show why jobs matter to factions, routes, and markets.</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>Recommended gameplay additions: 1) Consequence banners after live events. When a piracy event ends, show “Cargo lost: +pirate pressure on Route X,” “Raiders destroyed: bounty pressure lowered,” or “Goods recovered: station shortage relieved.” This does not require a new subsystem if event drivers write facts and ActiveJobs/Feed UI reads projections.</p>
+<p>2) Route risk visibility. The simulation schema has trade_route_state and market_trade_facts; expose route risk and recent disruption in station offers, local map lanes, and NPC chatter. A convoy route should feel safer or more dangerous based on recent pirate pressure and patrol success.</p>
+<p>3) NPC role readability. NpcShip already has role_tag, faction_id, cargo hints, route IDs, hostility, persona, and interaction metadata. The local map/HUD should display a compact contact card: faction, role, relation, cargo risk, current task, and whether hailing is available.</p>
+<p>4) Combat contracts that reuse existing combat plumbing. Bounty hunts and conflict zones can vary objectives without new weapons: disable a courier before jump, protect a miner while limpets collect ore, intercept a pirate collector, scan a target before kill confirmation, or choose a side in a faction skirmish.</p>
+<p>5) Exploration that changes jobs. Star-science facets should occasionally unlock station tasks: report high X-ray hazard, sell interferometry companion hints, find rare metallicity signatures, or flag hazardous systems for patrol/medical jobs.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/server/server_database.gd</code> creates durable simulation tables for ticks, jobs, markets, routes, trade facts, conflict zones, events, and contribution facts.</li><li><code>scripts/shared/server_runtime_services.gd</code> configures server_simulation_persistence for dedicated server runtime access.</li><li><code>scripts/systems/trade_service.gd</code> reads simulation market snapshots/history and records inventory/trade deltas through simulation persistence.</li><li><code>scripts/level/npc_piracy_event_driver.gd</code> implements the strongest current live-system loop: demand, jettison, cargo collection, disengage, attack, and raider destruction.</li><li><code>scripts/autoload/npc_combat_manager.gd</code> centralizes NPC runtime registration, combat-mode transitions, damage, destruction, groups, and replication snapshots.</li><li><code>scripts/autoload/bounty_hunt_service.gd</code> tracks feed-derived bounty contracts through clues, lead states, job entries, completion, payouts, and reputation deltas.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/autoload/npc_simulation_service.gd — public orchestration interface for active-system actors, runtime-mode requests, hails, task state, cargo/route metadata, and lightweight contacts.</li>
+<li>/home/j/3d-space/scripts/level/npc_piracy_event_driver.gd — full piracy scenario state machine with approach, demand, jettison, collection, disengage, attack, limpet collection, and cargo pod drop logic.</li>
+<li>/home/j/3d-space/scripts/level/faction_conflict_event_driver.gd — combat-zone/event driver for faction-vs-faction battles and player-side contribution recording.</li>
+<li>/home/j/3d-space/scripts/autoload/npc_combat_manager.gd — canonical NPC combat registry, damage entry point, runtime/group combat transitions, and replication snapshots.</li>
+<li>/home/j/3d-space/scripts/level/npc_ship.gd — lightweight/combat/derelict runtime for NPC ships, persona/identity metadata, hull/shield sync, damage, destruction, interaction, and replication.</li>
+<li>/home/j/3d-space/scripts/ai/ai_brain.gd and scripts/ai/ai_context.gd — patrol/pursue/evade/flank/retreat behavior state, target scoring, weapon fire ticks, and combat personality context.</li>
+<li>/home/j/3d-space/scripts/systems/trade_service.gd — player and NPC delivery market actions, simulation market snapshots/history, and trade fact recording.</li>
+<li>/home/j/3d-space/scripts/server/server_database.gd and scripts/server/services/server_simulation_persistence.gd — SQLite schema and persistence methods for ticks, markets, trade facts, conflict zones, simulation events, and contribution facts.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd, scripts/ui/star_scanner_overlay.gd, scripts/resources/star_science_resolver.gd — star-science facet staging and scanner minigame/payload path.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>Add a “Recent Consequences” widget fed by simulation_events and mission completion payloads.</li>
+<li>Create route-risk badges in station market/job board entries.</li>
+<li>Extend NPC contact metadata display to show role/faction/relation/task in the HUD/local map.</li>
+<li>Design 6 mission templates that reuse existing systems: escort, interception, pirate demand, bounty scan, conflict assist, and scanner survey.</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

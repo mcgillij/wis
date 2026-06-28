@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3d-space Regular Star Spectral Visual Identity and Shader Plan</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+th, td { border: 1px solid var(--border); padding: 0.55rem 0.7rem; vertical-align: top; }
+th { color: var(--accent); text-align: left; background: color-mix(in srgb, var(--code) 70%, transparent); }
+.badge { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:0.05rem 0.5rem; color:var(--muted); font-size:0.85rem; }
+.small { color: var(--muted); font-size: 0.92rem; }
+</style>
+</head>
+<body>
+<main><article>
+<h1>3d-space Regular Star Spectral Visual Identity and Shader Plan</h1>
+<div class="meta">
+  <div><strong>Generated:</strong> 2026-06-27 10:54 ADT (2026-06-27T10:54:48-03:00)</div>
+  <div><strong>Original inbox file:</strong> 2026-06-27-3d-space-regular-star-spectral-visual-identity-plan.md</div>
+  <div><strong>Source prompt excerpt:</strong> # 3d-space: Regular star spectral visual identity and shader plan Research regular star types for the 3d-space project and turn their real astrophysical differences into a usable visual identity system for game scenes/shaders. We already distinguish regular stars from exotic stars; now we need to make ordinary stars feel meaningfully different by spectral class, age/evolution, size, activity, and environment. Project…</div>
+</div>
+
+<h2>Executive Summary</h2>
+<p>Build one flexible <strong>regular-star shader family</strong> that covers O, B, A, F, G, K, and M stars through parameters for color temperature, radius scale, surface granulation, starspot density, flare rate, corona thickness, wind strength, and bloom. Add bespoke scene layers for giants/supergiants, very active M dwarfs, and hot O/B stars. Keep regular stars readable by color, size, activity, and environmental ambience, while reserving lensing/beams/extreme disks for exotic stars.</p>
+
+<h2>Spectral / Lifecycle Matrix</h2>
+<div class="table-wrap"><table><tr><th>Class / type</th><th>Real-world traits</th><th>Visual palette</th><th>Activity level</th><th>Scene / shader notes</th><th>Gameplay role</th></tr>
+<tr><td>O</td><td>very hot, massive, short-lived, blue</td><td>blue-white, violet halo</td><td>strong wind/radiation</td><td>large bloom, sparse surface detail, wind particles</td><td>rare dangerous beacon</td></tr>
+<tr><td>B</td><td>hot blue-white, massive</td><td>blue-white/cyan</td><td>high UV, possible disks</td><td>clean bright halo, optional Be equatorial disk</td><td>bright navigation landmark</td></tr>
+<tr><td>A</td><td>white, strong hydrogen lines</td><td>white, pale blue rim</td><td>moderate</td><td>smooth surface, crisp corona</td><td>readable “bright young” system</td></tr>
+<tr><td>F</td><td>yellow-white, hotter than Sun</td><td>warm white, pale gold</td><td>moderate</td><td>fine granulation, modest corona</td><td>habitable-zone contrast</td></tr>
+<tr><td>G</td><td>Sun-like</td><td>gold/yellow-white</td><td>moderate, spots/flares</td><td>baseline shader preset</td><td>familiar reference</td></tr>
+<tr><td>K</td><td>orange, cooler, long-lived</td><td>orange/gold</td><td>low-moderate</td><td>thicker warm limb, slower noise</td><td>stable exploration systems</td></tr>
+<tr><td>M dwarf</td><td>cool red dwarfs, often flare-active</td><td>red, ember orange</td><td>varies; flaring can be high</td><td>small dim core, starspots, red flare particles</td><td>common low-light hazard</td></tr>
+<tr><td>Red giant / AGB</td><td>expanded cool evolved star, mass loss</td><td>deep orange/red, dusty brown</td><td>slow pulsation, wind</td><td>huge radius, soft limb, dust shell</td><td>late-stage system story</td></tr>
+<tr><td>Blue giant / supergiant</td><td>massive luminous evolved star</td><td>blue-white, intense halo</td><td>strong wind</td><td>large scale, wind shell, harsh lighting</td><td>rare epic landmark</td></tr>
+<tr><td>Red supergiant / hypergiant</td><td>enormous unstable cool star</td><td>red-orange, smoky envelope</td><td>pulsing mass loss</td><td>oversized disk, lumpy surface, dusty arcs</td><td>spectacle / hazard</td></tr>
+</table></div>
+
+<h2>Visual Briefs</h2>
+<h3>O and B Stars</h3>
+<p>Use compact, intensely blue-white surface color, strong bloom, and visible stellar wind. Surface texture should be subtle; the readability comes from harsh blue lighting, large corona, and maybe wind streaks. O stars should be rare and dangerous; B stars can be common enough as bright navigational anchors. Avoid black-hole-style lensing.</p>
+<h3>A Stars</h3>
+<p>Clean white stars with pale blue rim and crisp corona. Low spot density and a polished look distinguish them from granular G/K stars. Good hosts for debris disks or exocomet phenomena.</p>
+<h3>F Stars</h3>
+<p>Warm white/gold, slightly hotter and brighter than G. Fine-grained surface noise, moderate corona, lower spot contrast. Use as a subtle but meaningful variation for habitable systems.</p>
+<h3>G Stars</h3>
+<p>Baseline solar visual: yellow-white core, visible granulation, moderate starspots, looping prominences, balanced corona. This should be the reference calibration for bloom and exposure.</p>
+<h3>K Stars</h3>
+<p>Orange-gold, stable, cozy but dimmer. Slightly larger apparent limb softness and slower surface animation. Excellent for readable warm systems without extreme hazards.</p>
+<h3>M Dwarfs</h3>
+<p>Small red ember with high spot coverage. Some should be quiet; flare-star variants should pulse with red/white flares and CME particles. Keep local illumination dim and red-tinted to make the system feel different.</p>
+<h3>Giants and AGB Stars</h3>
+<p>Scale is the hook: huge soft disk, slow convection cells, dusty circumstellar shell, mass-loss particles, and possible detached arcs. AGB variants can layer into the engulfment/rare-phenomena reports.</p>
+<h3>Supergiants / Hypergiants</h3>
+<p>Use bespoke scale treatment: large backdrop footprint, unstable lumpy surface, extended halo, wind-blown shell, and heavy exposure management. They should feel different from merely scaling up a normal star sphere.</p>
+
+<h2>Shader Parameter Plan</h2>
+<pre><code>RegularStarShaderParams {
+  spectral_class: StringName,
+  color_temperature_k: float,
+  core_color: Color,
+  limb_color: Color,
+  radius_scale: float,
+  luminosity_scale: float,
+  granulation_scale: float,
+  granulation_contrast: float,
+  surface_flow_speed: float,
+  limb_darkening_strength: float,
+  corona_thickness: float,
+  corona_filament_strength: float,
+  starspot_density: float,
+  starspot_contrast: float,
+  flare_rate: float,
+  prominence_strength: float,
+  wind_particle_strength: float,
+  dust_shell_strength: float,
+  impostor_bloom_scale: float
+}</code></pre>
+<ul>
+<li>O/B: high temperature, high luminosity, low spot density, strong corona/wind.</li>
+<li>F/G/K: moderate temperature, useful granulation, balanced spots and prominences.</li>
+<li>M: low temperature, low luminosity, high spot density, optional high flare rate.</li>
+<li>Giants: high radius scale, lower surface flow speed, dust shell and limb softness.</li>
+</ul>
+
+<h2>Regular vs Exotic Readability</h2>
+<ul>
+<li>Regular stars should be spherical, emissive, and atmosphere/corona-driven.</li>
+<li>Exotics own the extreme silhouettes: event-horizon lensing, narrow beams, accretion-dominated disks, impossible dark cores.</li>
+<li>White dwarfs sit near the boundary: regular remnant scientifically, but game-facing exotic because of small intense silhouette and debris disks.</li>
+<li>Use scan labels and map icons for edge cases so art does not carry all classification burden.</li>
+</ul>
+
+<h2>Godot Techniques</h2>
+<ul>
+<li><strong>MeshInstance3D sphere:</strong> emissive shader with layered noise and limb darkening.</li>
+<li><strong>Layered transparent shells:</strong> corona, prominences, halo, and dust.</li>
+<li><strong>Particles:</strong> flares, CME arcs, wind streaks, giant mass loss.</li>
+<li><strong>SubViewport/impostors:</strong> cache far star appearances for star maps and distant billboards.</li>
+<li><strong>Color ramps:</strong> map spectral class to physically inspired but game-readable palettes.</li>
+<li><strong>LOD:</strong> far impostor, mid simplified shells, near full particles/surface.</li>
+</ul>
+
+<h2>Implementation Roadmap</h2>
+<ol><li>Build calibrated G-star base shader and exposure/bloom standard.</li><li>Add spectral presets O/B/A/F/G/K/M using the compact parameter set.</li><li>Add far impostor materials matching each spectral preset and test them in the existing star impostor showcase.</li><li>Add flare-star M variant and Be/O/B wind variants.</li><li>Add giant/supergiant bespoke shells and dust/mass-loss components.</li><li>Add scan text and registry metadata for activity, age, and lifecycle stage.</li></ol>
+
+<h2>Sources / Further Reading</h2>
+<ul><li>NASA star types: <a href="https://science.nasa.gov/universe/stars/types/">https://science.nasa.gov/universe/stars/types/</a></li><li>HubbleSite star life cycle: <a href="https://hubblesite.org/contents/articles/the-life-cycle-of-stars">https://hubblesite.org/contents/articles/the-life-cycle-of-stars</a></li><li>Use stellar color temperature and spectral-class references as palette guides, then tune for gameplay readability and HDR bloom.</li></ul>
+
+<div class="footer">Generated by the While I Sleep queue runner. Standalone HTML: no required external assets.</div>
+</article></main>
+</body></html>

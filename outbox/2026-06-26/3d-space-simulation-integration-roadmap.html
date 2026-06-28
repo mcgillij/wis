@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Space Simulation Integration Roadmap</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.report-meta { border: 1px solid rgba(128,128,128,.35); padding: 0.75rem 1rem; border-radius: 0.6rem; margin: 1rem 0 1.5rem; }
+.report-meta dt { font-weight: 700; }
+.report-meta dd { margin: 0 0 .45rem 0; }
+.code-map li { margin-bottom: .45rem; }
+.badge { display:inline-block; padding:.15rem .45rem; border-radius:.4rem; background:rgba(120,140,255,.15); }
+</style>
+</head>
+<body>
+<main>
+<article>
+<header>
+<p class="badge">While I Sleep report</p>
+<h1>3D Space Simulation Integration Roadmap</h1>
+<dl class="report-meta">
+<dt>Generated</dt><dd>2026-06-26T04:38:08-03:00</dd>
+<dt>Original inbox file</dt><dd><code>2026-06-26-3d-space-simulation-integration-roadmap.md</code></dd>
+<dt>Source prompt excerpt</dt><dd># 3d-space: Simulation Integration Roadmap Create an actionable roadmap for connecting the `/home/j/3d-space` simulation layer to main game systems from the server side. ## Goal Produce a standalone HTML report that sequences simulation integration work into practical implementation phases. ## Constraints - Use the current codebase as ground truth. - Prefer server-authoritative state and clean boundaries. - Avoid giant rewrites as the first step. - Favor visible player-facing results early while building toward a d…</dd>
+<dt>Research basis</dt><dd>Local repository inspection of <code>/home/j/3d-space</code>; no external web research was used.</dd>
+</dl>
+</header>
+<section>
+<h2>Executive Summary</h2>
+<p>The integration path should convert the existing systems into a closed loop: live gameplay emits facts, a strategic tick consumes facts, simulation state changes, and feed/jobs/UI expose those changes back to the player. The repository already has nearly every component needed for this architecture.</p>
+<p>The highest leverage work is standardization: one fact-writing path, one strategic tick consumption contract, one projection path to feed/jobs, and one debug surface for verification.</p>
+</section>
+<section>
+<h2>Key Findings</h2>
+<ul>
+<li>NpcWorldOrchestrator registers/deregisters active systems with NpcSimulationService and forwards runtime-mode/hailed signals, which is a clear live-world bridge.</li>
+<li>NpcCombatManager registers NPC runtimes/groups, changes group runtime states, applies authoritative damage, and provides combat snapshots; use it for combat fact hooks.</li>
+<li>TradeService and server_simulation_persistence already join player/NPC market activity to station_market_state and market_trade_facts.</li>
+<li>Feed projection can consume public simulation_events and create story candidates, which is the correct downstream narrative channel.</li>
+<li>ActiveJobsHudController and JobBoardPresenter can merge active system events, bounty job entries, station offers, and conflict/pirate raid offers into actionable UI.</li>
+</ul>
+</section>
+<section>
+<h2>Detailed Notes</h2>
+<p>Step 1 — Define simulation fact schema in code. Even with flexible payload_json, codify required keys for each fact type in one place: event_id, system_id, world_instance_id, route_id, actor_id, player_id, faction_id, commodity_id, quantity, value, outcome, occurred_at. Add validation warnings in debug builds.</p>
+<p>Step 2 — Add fact hooks to four vertical systems: TradeService for market_trade, NpcPiracyEventDriver for piracy/cargo/raider outcomes, BountyHuntMissionDriver for bounty completion, and FactionConflictEventDriver for conflict contribution/resolution. Use authoritative guards.</p>
+<p>Step 3 — Implement strategic tick consumption. The tick reads unconsumed facts, updates station_market_state, trade_route_state, conflict_zones, and system_control_state, writes simulation_events, then marks consumed_tick_id. Keep tick deterministic per date/tick_id where possible.</p>
+<p>Step 4 — Project simulation_events. FeedEventService already handles unconsumed public events. Extend projections for route disruption, market shortage/surplus, pirate activity, bounty pressure, and faction control changes.</p>
+<p>Step 5 — Surface in gameplay. Add route-risk badges, station shortage/surplus explanations, job-board offers based on recent events, and local map overlays for active conflict/piracy pressure.</p>
+<p>Step 6 — Verify with scenario tests. Create integration tests that seed facts, run a tick, assert state changes, project feed entries, then assert job-board/active-jobs entries reflect them.</p>
+</section>
+<section>
+<h2>Grounded Code Evidence</h2>
+<ul class="code-map"><li><code>scripts/server/server_database.gd</code> creates durable simulation tables for ticks, jobs, markets, routes, trade facts, conflict zones, events, and contribution facts.</li><li><code>scripts/shared/server_runtime_services.gd</code> configures server_simulation_persistence for dedicated server runtime access.</li><li><code>scripts/systems/trade_service.gd</code> reads simulation market snapshots/history and records inventory/trade deltas through simulation persistence.</li><li><code>scripts/level/npc_piracy_event_driver.gd</code> implements the strongest current live-system loop: demand, jettison, cargo collection, disengage, attack, and raider destruction.</li><li><code>scripts/autoload/npc_combat_manager.gd</code> centralizes NPC runtime registration, combat-mode transitions, damage, destruction, groups, and replication snapshots.</li><li><code>scripts/autoload/bounty_hunt_service.gd</code> tracks feed-derived bounty contracts through clues, lead states, job entries, completion, payouts, and reputation deltas.</li></ul>
+</section>
+<section>
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>/home/j/3d-space/scripts/autoload/npc_simulation_service.gd — public orchestration interface for active-system actors, runtime-mode requests, hails, task state, cargo/route metadata, and lightweight contacts.</li>
+<li>/home/j/3d-space/scripts/level/npc_piracy_event_driver.gd — full piracy scenario state machine with approach, demand, jettison, collection, disengage, attack, limpet collection, and cargo pod drop logic.</li>
+<li>/home/j/3d-space/scripts/level/faction_conflict_event_driver.gd — combat-zone/event driver for faction-vs-faction battles and player-side contribution recording.</li>
+<li>/home/j/3d-space/scripts/autoload/npc_combat_manager.gd — canonical NPC combat registry, damage entry point, runtime/group combat transitions, and replication snapshots.</li>
+<li>/home/j/3d-space/scripts/level/npc_ship.gd — lightweight/combat/derelict runtime for NPC ships, persona/identity metadata, hull/shield sync, damage, destruction, interaction, and replication.</li>
+<li>/home/j/3d-space/scripts/ai/ai_brain.gd and scripts/ai/ai_context.gd — patrol/pursue/evade/flank/retreat behavior state, target scoring, weapon fire ticks, and combat personality context.</li>
+<li>/home/j/3d-space/scripts/systems/trade_service.gd — player and NPC delivery market actions, simulation market snapshots/history, and trade fact recording.</li>
+<li>/home/j/3d-space/scripts/server/server_database.gd and scripts/server/services/server_simulation_persistence.gd — SQLite schema and persistence methods for ticks, markets, trade facts, conflict zones, simulation events, and contribution facts.</li>
+<li>/home/j/3d-space/scripts/systems/discovery_manager.gd, scripts/ui/star_scanner_overlay.gd, scripts/resources/star_science_resolver.gd — star-science facet staging and scanner minigame/payload path.</li>
+</ul>
+</section>
+<section>
+<h2>Open Questions / Next Steps</h2>
+<ul>
+<li>Build a “simulation fixture day” test helper to seed market, piracy, bounty, and conflict facts.</li>
+<li>Make route_id and system_id consistently available in NPC actor metadata and mission event payloads.</li>
+<li>Add one debug page/report: facts consumed, state deltas, emitted events, feed projections.</li>
+<li>After loop works for piracy, reuse the same contract for conflict and exploration.</li>
+</ul>
+</section>
+</article>
+</main>
+</body>
+</html>

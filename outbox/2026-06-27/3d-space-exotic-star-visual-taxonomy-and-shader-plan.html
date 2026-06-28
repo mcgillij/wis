@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3d-space Exotic Star Visual Taxonomy and Shader Plan</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+th, td { border: 1px solid var(--border); padding: 0.55rem 0.7rem; vertical-align: top; }
+th { color: var(--accent); text-align: left; background: color-mix(in srgb, var(--code) 70%, transparent); }
+.badge { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:0.05rem 0.5rem; color:var(--muted); font-size:0.85rem; }
+.small { color: var(--muted); font-size: 0.92rem; }
+</style>
+</head>
+<body>
+<main><article>
+<h1>3d-space Exotic Star Visual Taxonomy and Shader Plan</h1>
+<div class="meta">
+  <div><strong>Generated:</strong> 2026-06-27 10:54 ADT (2026-06-27T10:54:48-03:00)</div>
+  <div><strong>Original inbox file:</strong> 2026-06-27-3d-space-exotic-star-visual-taxonomy-and-shader-plan.md</div>
+  <div><strong>Source prompt excerpt:</strong> # 3d-space: Exotic star visual taxonomy and scene/shader plan Research additional exotic compact/unusual star and stellar-remnant types for the 3d-space project. Current implemented exotic types are black hole, neutron star, and dark star; the goal is to identify several more visually distinct exotic star types worth adding, then translate them into actionable art/tech direction for Godot scenes and shaders. Project …</div>
+</div>
+
+<h2>Executive Summary</h2>
+<p>Recommended new exotic / unusual centerpiece visuals for <code>3d-space</code>: <strong>white dwarf debris star</strong>, <strong>brown dwarf ember</strong>, <strong>magnetar</strong>, <strong>pulsar lighthouse</strong>, <strong>Wolf-Rayet wind star</strong>, <strong>carbon star</strong>, and <strong>protostar / T Tauri disk system</strong>. Treat quark stars, strange stars, preon stars, gravastars, and Thorne-Żytkow objects as later speculative variants or lore anomalies unless the game wants intentionally weird science-fantasy.</p>
+
+<h2>Candidate Matrix</h2>
+<div class="table-wrap"><table><tr><th>Type</th><th>Science basis</th><th>Visual identity</th><th>Gameplay / readability role</th><th>Difficulty</th><th>Priority</th></tr>
+<tr><td>White dwarf</td><td>stellar remnant, observed</td><td>tiny blue-white point, hard halo, optional debris disk</td><td>old dead system, high gravity/radiation, metal debris</td><td>Low-Med</td><td>1</td></tr>
+<tr><td>Brown dwarf</td><td>substellar object, observed</td><td>dim red/magenta ember, banded atmosphere, weak glow</td><td>low-light systems, stealth/navigation mood</td><td>Low</td><td>1</td></tr>
+<tr><td>Magnetar</td><td>highly magnetized neutron star, observed</td><td>violent blue-white core, twisted magnetic arcs, flare bursts</td><td>extreme hazard, scan prestige</td><td>Med</td><td>1</td></tr>
+<tr><td>Pulsar</td><td>rotating neutron star beams, observed</td><td>lighthouse beams, rhythmic pulses, timing rings</td><td>navigation beacon / timing hazard</td><td>Med</td><td>1</td></tr>
+<tr><td>Wolf-Rayet</td><td>massive evolved stars with strong winds, observed</td><td>hot blue core, wind bubble, emission shell</td><td>rare luminous landmark</td><td>Med</td><td>2</td></tr>
+<tr><td>Carbon star</td><td>cool evolved carbon-rich giant, observed</td><td>deep ruby/orange, smoky molecule-rich halo</td><td>distinct non-exotic giant flavor</td><td>Low</td><td>2</td></tr>
+<tr><td>Protostar / T Tauri</td><td>young star formation, observed</td><td>dust envelope, bipolar jets, disk silhouette</td><td>nursery systems, navigation occlusion</td><td>Med</td><td>2</td></tr>
+<tr><td>Blue straggler</td><td>cluster stars rejuvenated by merger/mass transfer</td><td>over-bright blue star in old context</td><td>cluster lore / anomaly scan</td><td>Low</td><td>3</td></tr>
+<tr><td>Thorne-Żytkow object</td><td>hypothetical red supergiant with neutron core</td><td>red supergiant + hidden pulsing core hints</td><td>mystery system</td><td>Med</td><td>Later</td></tr>
+<tr><td>Quark/strange star</td><td>hypothetical compact object</td><td>ultra-compact violet-white, crystalline glitches</td><td>science-fantasy endgame</td><td>Med</td><td>Later</td></tr>
+</table></div>
+
+<h2>Per-Type Visual Briefs</h2>
+<h3>White Dwarf</h3>
+<ul><li><strong>Palette:</strong> white, blue-white, pale cyan; optional red/orange disk rim.</li><li><strong>Silhouette:</strong> tiny intense core with sharp bloom, little surface texture, high contrast against dark sky.</li><li><strong>Shader features:</strong> small sphere, strong emissive falloff, hard limb, thin accretion/debris disk variant.</li><li><strong>Difference from neutron star:</strong> calmer, no beams by default, larger/less extreme hazard, more “dead sun” than cosmic weapon.</li></ul>
+<h3>Brown Dwarf</h3>
+<ul><li><strong>Palette:</strong> dark red, magenta, amber, infrared-feeling low saturation.</li><li><strong>Silhouette:</strong> gas-giant-like bands with faint internal glow and weak corona.</li><li><strong>Shader features:</strong> rotating cloud bands, noise storms, minimal bloom, strong nearby darkness.</li><li><strong>Role:</strong> low-light exploration systems, hidden stations, cold moons.</li></ul>
+<h3>Magnetar</h3>
+<ul><li><strong>Palette:</strong> electric blue, white, violet, occasional red flare warning.</li><li><strong>Silhouette:</strong> compact core wrapped by twisted magnetic loop ribbons and burst particles.</li><li><strong>Animation:</strong> irregular flare spikes; avoid perfectly steady pulsar rhythm.</li><li><strong>Hazards:</strong> radiation bursts, sensor overload, navigation disruption.</li></ul>
+<h3>Pulsar</h3>
+<ul><li><strong>Palette:</strong> blue-white core, cyan beam cones, dark transparent timing rings.</li><li><strong>Silhouette:</strong> two opposed beams sweeping with stable period; optional equatorial wind nebula.</li><li><strong>Shader features:</strong> beam mesh cones with additive material, rotating parent, pulse-synchronized bloom.</li><li><strong>Role:</strong> readable from far away; can become navigation/timing puzzle.</li></ul>
+<h3>Wolf-Rayet Star</h3>
+<ul><li><strong>Palette:</strong> hot blue/white core, teal/violet wind shell, pale emission knots.</li><li><strong>Silhouette:</strong> thick wind halo, blown bubble, high mass-loss streaks.</li><li><strong>Difference from O star:</strong> more turbulent, stripped, with visible wind shell and stronger environmental effect.</li></ul>
+<h3>Carbon Star</h3>
+<ul><li><strong>Palette:</strong> deep ruby, burnt orange, smoky brown, occasional soot-dark molecular bands.</li><li><strong>Silhouette:</strong> large cool giant with soft dusty halo; slow surface motion.</li><li><strong>Role:</strong> non-compact exotic-looking regular/evolved star; useful because it is cheap and visually distinct.</li></ul>
+<h3>Protostar / T Tauri / Herbig Ae-Be</h3>
+<ul><li><strong>Palette:</strong> warm young star, dark dusty disk, blue bipolar jets, reflection nebula.</li><li><strong>Silhouette:</strong> central object partly hidden by disk/envelope; jets give strong axis.</li><li><strong>Scene composition:</strong> disk mesh + two jet particle beams + backdrop dust billboards.</li></ul>
+<h3>Speculative Compact Objects</h3>
+<p>Quark/strange stars, preon stars, and gravastars are best as ultra-rare late-game variants of the neutron/dark-star scene family. Use different surface/halo language—crystalline flicker, gravitational mirage, or impossible lens bands—while clearly labeling them speculative in scan text.</p>
+
+<h2>Reusable Godot Shader / Scene Components</h2>
+<ul>
+<li><code>StarCoreSphere</code>: emissive sphere with spectral color, limb darkening, surface noise speed, spot density, and bloom multiplier.</li>
+<li><code>CoronaShell</code>: one or more transparent additive shells; parameters for thickness, filament scale, wind direction, and pulse response.</li>
+<li><code>DiskComponent</code>: ring mesh for debris/accretion/protoplanetary disks; expose inner radius, outer radius, warp, dust opacity, and hot rim color.</li>
+<li><code>BeamComponent</code>: cone/cylinder meshes for pulsars, jets, and magnetar bursts; expose period, phase, width, and hazard coupling.</li>
+<li><code>BillboardHeroImpostor</code>: far-view version for map/backdrop consistency, using the same palette and silhouette metadata.</li>
+</ul>
+<pre><code>StarVisualPreset {
+  id: &amp;"magnetar",
+  base_family: &amp;"neutron_star",
+  core_color: Color(0.72, 0.9, 1.0),
+  corona_color: Color(0.45, 0.3, 1.0),
+  pulse_period: 0.0,          # irregular if 0
+  flare_rate: 0.8,
+  beam_width: 0.05,
+  disk_preset: &amp;"none",
+  hazard_profile: &amp;"magnetic_burst",
+  far_impostor_scene: "res://scenes/stars/exotic_star_far_impostor.tscn"
+}</code></pre>
+
+<h2>Implementation Pitfalls</h2>
+<ul>
+<li>Do not make every rare object brighter than every normal star; brown dwarfs and white dwarfs should be distinctive via contrast and context, not just bloom.</li>
+<li>Differentiate pulsar vs magnetar: pulsar is periodic and geometric; magnetar is bursty, distorted, and unstable.</li>
+<li>Keep black hole visuals unique: lensing/accretion dominance belongs primarily there, not on every compact object.</li>
+<li>Expose LOD: far impostor, mid billboard, near mesh/particle stack.</li>
+</ul>
+
+<h2>Roadmap</h2>
+<ol><li><strong>First:</strong> white dwarf, brown dwarf, pulsar/magnetar variants because they reuse compact-star infrastructure and far impostor tests.</li><li><strong>Second:</strong> Wolf-Rayet and carbon star because they broaden stellar color/scale vocabulary.</li><li><strong>Third:</strong> protostar/T Tauri systems once disk/jet components are robust.</li><li><strong>Later:</strong> TZO, quark/strange star, gravastar/preon as very rare lore anomalies.</li></ol>
+
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>NASA star types: <a href="https://science.nasa.gov/universe/stars/types/">https://science.nasa.gov/universe/stars/types/</a></li>
+<li>HubbleSite star life cycle: <a href="https://hubblesite.org/contents/articles/the-life-cycle-of-stars">https://hubblesite.org/contents/articles/the-life-cycle-of-stars</a></li>
+<li>ESO massive-star and Wolf-Rayet context: <a href="https://www.eso.org/public/news/eso1230/">https://www.eso.org/public/news/eso1230/</a></li>
+<li>NASA / Chandra / ESA resources on pulsars, magnetars, and compact remnants are appropriate primary references for later implementation documentation.</li>
+</ul>
+
+<div class="footer">Generated by the While I Sleep queue runner. Standalone HTML: no required external assets.</div>
+</article></main>
+</body></html>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3d-space Engulfed Planets and Rare Stellar Event Visuals</title>
+<style>
+:root {
+  color-scheme: dark light;
+  --bg: #101114;
+  --panel: #181b21;
+  --text: #e8e6df;
+  --muted: #a7a29a;
+  --accent: #d5a657;
+  --border: #30343d;
+  --code: #222631;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f7f3ea;
+    --panel: #fffaf0;
+    --text: #232018;
+    --muted: #675f52;
+    --accent: #9b6518;
+    --border: #dfd4c1;
+    --code: #f1eadf;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+main {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 0.22);
+}
+h1, h2, h3 { line-height: 1.2; }
+h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.4rem); }
+h2 { margin-top: 2.4rem; color: var(--accent); }
+a { color: var(--accent); }
+.meta {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+blockquote {
+  border-left: 4px solid var(--accent);
+  margin-left: 0;
+  padding: 0.5rem 0 0.5rem 1rem;
+  color: var(--muted);
+}
+code, pre {
+  background: var(--code);
+  border-radius: 8px;
+}
+code { padding: 0.15rem 0.3rem; }
+pre { padding: 1rem; overflow-x: auto; }
+ul, ol { padding-left: 1.4rem; }
+.footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+th, td { border: 1px solid var(--border); padding: 0.55rem 0.7rem; vertical-align: top; }
+th { color: var(--accent); text-align: left; background: color-mix(in srgb, var(--code) 70%, transparent); }
+.badge { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:0.05rem 0.5rem; color:var(--muted); font-size:0.85rem; }
+.small { color: var(--muted); font-size: 0.92rem; }
+</style>
+</head>
+<body>
+<main><article>
+<h1>3d-space Engulfed Planets and Rare Stellar Event Visuals</h1>
+<div class="meta">
+  <div><strong>Generated:</strong> 2026-06-27 10:54 ADT (2026-06-27T10:54:48-03:00)</div>
+  <div><strong>Original inbox file:</strong> 2026-06-27-3d-space-engulfed-planets-and-rare-stellar-event-visuals.md</div>
+  <div><strong>Source prompt excerpt:</strong> # 3d-space engulfed planets and rare stellar event visuals Research rare, visually striking astronomical events and aftermath states inspired by the Universe Today article on stellar evidence of an engulfed planet: https://www.universetoday.com/articles/astronomers-find-stellar-evidence-of-an-engulfed-planet ## Goal Compile a game-design-ready catalog of rare stellar/system visuals for the `/home/j/3d-space/` Godot p…</div>
+</div>
+
+<h2>Executive Summary</h2>
+<p>The strongest additions for <code>3d-space</code> are not new base star classes but <strong>rare system-level modifiers</strong> layered onto normal stars: polluted giant, recently engulfed planet, warm dust aftermath, metal-polluted white dwarf, active Roche stream, and disintegrating rocky planet. They tell a story at a glance: something fell in, was torn apart, or is still feeding the star.</p>
+<p>Make these rare, scan-forward discoveries. The visuals should combine a modified star material, a sky/backdrop billboard for large-scale dust or shell structure, and local meshes/particles for rings, debris arcs, and accretion streams.</p>
+
+<h2>Comparison Table</h2>
+<div class="table-wrap"><table><tr><th>Visual / phenomenon</th><th>Science hook</th><th>Visual hook</th><th>Generation constraints</th><th>Gameplay hook</th><th>Cost</th><th>Confidence</th></tr>
+<tr><td>Polluted red giant after engulfment</td><td>Planet ingestion can alter surface abundances and spin</td><td>bloated orange star, dusty inner void, asymmetric glow</td><td>subgiant/RGB/AGB, close-in planet history</td><td>scan anomaly, missing hot planet, heat hazard</td><td>Low-Med</td><td>Strongly plausible / observed signatures</td></tr>
+<tr><td>Lithium-rich giant</td><td>Li excess may be internal mixing or engulfment</td><td>green-gold scan aura, spectral line UI motif</td><td>rare giant modifier</td><td>chemistry reward, ambiguous lore</td><td>Low</td><td>Observed, cause mixed</td></tr>
+<tr><td>Spin-up engulfment star</td><td>ingested angular momentum increases rotation/activity</td><td>fast surface bands, oblate halo, frequent flares</td><td>post-engulfment, F/G/K/subgiant</td><td>flare timing hazard</td><td>Low</td><td>Plausible / candidate cases</td></tr>
+<tr><td>Warm dust shell</td><td>disrupted planet/giant impact produces IR excess</td><td>rusty torus, broken arcs, glowing dust clumps</td><td>young or recently disturbed system</td><td>navigation obscuration, salvage</td><td>Med</td><td>Observed dust excesses</td></tr>
+<tr><td>Metal-polluted white dwarf debris disk</td><td>asteroids/planetesimals tidally disrupted and accreted</td><td>tiny white star with razor-thin glowing disk</td><td>white dwarf, old system, remnant belt</td><td>metal scan, radiation/dust hazard</td><td>Med</td><td>Observed</td></tr>
+<tr><td>Active Roche stream</td><td>planet or companion overflowing Roche lobe</td><td>curved plasma stream into star</td><td>close orbit, evolved/compact host</td><td>danger route, timed traversal</td><td>Med-High</td><td>Strongly plausible, interacting binaries observed</td></tr>
+<tr><td>Disintegrating rocky planet</td><td>ultra-short-period rocky body shedding dust</td><td>black comet tail, sparkling fragments</td><td>hot close orbit, small rocky remnant</td><td>rare mineral trail</td><td>Med</td><td>Observed candidates</td></tr>
+<tr><td>Giant impact cloud</td><td>planet-planet collision debris creates IR-bright dust</td><td>one-sided crescent cloud, fragments on similar orbit</td><td>young systems, unstable packed orbits</td><td>archaeology / recent catastrophe</td><td>Med</td><td>Observed dust systems, event-specific uncertain</td></tr>
+<tr><td>Magnetic star-planet interaction</td><td>close planet drives flares/auroral footprints</td><td>looping magnetic arcs, pulsed footprints</td><td>active star + close giant</td><td>electromagnetic hazard</td><td>Med</td><td>Plausible / studied</td></tr>
+<tr><td>Nova shell / recent thermonuclear outburst</td><td>white dwarf accretion eruption ejects shell</td><td>expanding bipolar shell, knots, bright central binary</td><td>WD binary/cataclysmic variable</td><td>radiation, rare isotopes</td><td>High</td><td>Observed</td></tr>
+<tr><td>Comet storm / exocomet swarm</td><td>perturbed icy bodies feed inner dust/gas</td><td>many faint tails toward star</td><td>young A/F stars or disturbed belts</td><td>scan puzzle, water/organics</td><td>Med</td><td>Observed exocomet signatures</td></tr>
+<tr><td>Fallback / remnant disk</td><td>post-supernova or collision debris remains bound</td><td>dark disk with hot inner rim</td><td>compact remnants, rare</td><td>forbidden-zone lore</td><td>Med</td><td>Observed/plausible in some remnants</td></tr>
+</table></div>
+
+<h2>Individual Candidate Notes</h2>
+<h3>1. Engulfed-Planet Polluted Giant</h3>
+<p><strong>Science basis:</strong> As stars expand off the main sequence, close-in planets can spiral in. Observable hints include abundance anomalies, enhanced rotation, dust, and orbital architecture with missing inner planets. The starting Universe Today article reports stellar evidence consistent with engulfment; treat individual cases as evidence-weighted, not a directly visible swallowed planet.</p>
+<p><strong>Visual identity:</strong> swollen amber/red star, slightly mottled surface, off-axis dust plume, cleared inner-orbit “scar,” and short-lived ember fragments. Use a warm orange/gold palette with darker brown dust.</p>
+<p><strong>Rules:</strong> requires subgiant/red giant/AGB; requires prior inner planet; rare; mutually exclusive with pristine stable inner rocky system. <span class="badge">Reliability: strongly plausible</span></p>
+
+<h3>2. Lithium-Rich Giant</h3>
+<p>Observed lithium-rich giants are real, but the cause can be internal production or planet engulfment. In-game, make this a scan anomaly rather than a guaranteed story. Visualize with subtle spectral-line UI, increased activity, and unusual golden-green corona tint.</p>
+
+<h3>3. Rapid-Rotator Post-Engulfment Star</h3>
+<p>A swallowed planet can transfer angular momentum. Render fast surface noise advection, broader equatorial halo, oblate-looking flare distribution, and frequent coronal mass ejection particles. Good low-cost modifier for F/G/K subgiants.</p>
+
+<h3>4. Warm Dust Shell / Recent Collision Aftermath</h3>
+<p>Infrared excess can reveal warm circumstellar dust from collisions or disruptions. Use broken torus meshes, billboard clumps, and orange backscatter. Make the dust denser on one orbital arc to imply recent origin.</p>
+
+<h3>5. Metal-Polluted White Dwarf with Debris Disk</h3>
+<p>White dwarfs often show atmospheric metals that should sink quickly, implying ongoing/recent accretion of rocky debris. This is one of the best science-grounded visuals: small intense white star, thin dusty/gaseous disk, tidal fragments inside the Roche limit.</p>
+
+<h3>6. Tidal Planet Disruption / Roche Stream</h3>
+<p>For compact stars or evolved giants, a close body can be stretched into a stream. Use a Bezier ribbon/particle path feeding the star, with denser knots and hot impact spot. This is visually high-value but should be rare and performance-tiered.</p>
+
+<h3>7. Disintegrating Rocky Planet</h3>
+<p>Ultra-short-period rocky planets can shed dusty tails. Render as a small dark body with a comet-like tail, intermittent chunks, and transit-dimming scan text. Great as a local discovery near hot stars.</p>
+
+<h3>8. Giant Impact Dust Cloud</h3>
+<p>A recent planet-planet collision can generate large warm dust clouds. Visualize a crescent cloud in one orbital lane, multiple remnant chunks, and a scan reading of silicate vapor/dust.</p>
+
+<h3>9. Star-Planet Magnetic Interaction</h3>
+<p>Close giant planets around active stars may couple magnetically. Render looping plasma lines from star toward the planet, pulsed auroral footprint on the stellar surface, and synchronized flare timing.</p>
+
+<h3>10. Nova Shell / Cataclysmic Variable Aftermath</h3>
+<p>Accreting white dwarfs in binaries can erupt, creating shells and knots. This is adjacent to engulfment but visually valuable. Use a central binary, expanding translucent shell, and high-radiation hazard.</p>
+
+<h3>11. Exocomet Storm</h3>
+<p>Falling evaporating bodies around young or disturbed stars create absorption signatures and dust. Render many small faint tails, all roughly anti-star, with scan rewards for volatiles.</p>
+
+<h3>12. Fallback / Remnant Disk</h3>
+<p>Some compact remnants may have fallback material. In-game, reserve for rare compact systems: dark disk, hot inner rim, forbidden salvage, and unstable navigation.</p>
+
+<h2>Planet Engulfment Event Chain</h2>
+<ol>
+<li><strong>Pre-engulfment:</strong> close-in planet has decaying orbit; star shows strong tides, magnetic arcs, and increasing flare rate.</li>
+<li><strong>Active disruption:</strong> Roche stream, evaporating tail, hot impact footprint, transient optical/infrared brightening. This should be extremely rare or scripted because it is short-lived.</li>
+<li><strong>Immediate aftermath:</strong> warm dust shell, asymmetric plume, missing planet, unstable fragments, elevated activity.</li>
+<li><strong>Long-term polluted state:</strong> abundance anomaly, spin-up, altered remaining orbits, remnant debris belt; best for procedural rarity because it persists longer.</li>
+</ol>
+
+<h2>Registry-Style Entries</h2>
+<pre><code>{
+  "id": &amp;"post_engulfment_giant",
+  "spawn_weight": 0.0008,
+  "requires_star_stage": [&amp;"subgiant", &amp;"red_giant", &amp;"agb"],
+  "requires_inner_planet_history": true,
+  "requires_debris_disk": false,
+  "visual_preset": &amp;"engulfment_dust_plume",
+  "hazard_profile": &amp;"high_heat_variable_flares",
+  "scan_anomaly_text": "Lithium and refractory metals suggest recent planetary ingestion.",
+  "associated_planetary_remnants": [&amp;"broken_inner_orbit", &amp;"silicate_dust_arc"]
+}
+{
+  "id": &amp;"polluted_white_dwarf_disk",
+  "spawn_weight": 0.002,
+  "requires_star_stage": [&amp;"white_dwarf"],
+  "requires_debris_disk": true,
+  "visual_preset": &amp;"thin_roche_debris_disk",
+  "hazard_profile": &amp;"radiation_dust",
+  "scan_anomaly_text": "Metals in the white dwarf atmosphere require ongoing rocky accretion."
+}</code></pre>
+
+<h2>Godot Implementation Notes</h2>
+<ul>
+<li><strong>Low cost:</strong> star shader parameter modifiers, billboard dust arcs, scan text, color ramp shifts.</li>
+<li><strong>Medium cost:</strong> ring/disk mesh, GPU particles for fragments, curved ribbon stream, local debris props.</li>
+<li><strong>High cost:</strong> volumetric shells, animated Roche streams with collision avoidance, large multi-layer nebula backdrops.</li>
+<li>Use deterministic modifier stacks: base star class + rare aftermath modifier + optional companion debris modifier.</li>
+<li>Render far-view state as skybox/billboard silhouettes; promote to local rings/particles only when the player enters the affected system.</li>
+</ul>
+
+<h2>Prioritized Shortlist</h2>
+<ol>
+<li>Metal-polluted white dwarf debris disk — strongest science + striking silhouette.</li>
+<li>Post-engulfment red giant with dust plume — directly matches prompt and easy to layer on giants.</li>
+<li>Disintegrating rocky planet tail — clear gameplay object and medium cost.</li>
+<li>Warm giant-impact dust cloud — versatile for young systems.</li>
+<li>Roche stream into compact/evolved star — high visual payoff after stream tech exists.</li>
+<li>Magnetic star-planet interaction — good animated hazard and scan puzzle.</li>
+</ol>
+
+<h2>Sources / Further Reading</h2>
+<ul>
+<li>Starting article: <a href="https://www.universetoday.com/articles/astronomers-find-stellar-evidence-of-an-engulfed-planet">Universe Today — Astronomers Find Stellar Evidence of an Engulfed Planet</a></li>
+<li>NASA star lifecycle background: <a href="https://hubblesite.org/contents/articles/the-life-cycle-of-stars">HubbleSite — The Life Cycle of Stars</a></li>
+<li>NASA star types: <a href="https://science.nasa.gov/universe/stars/types/">science.nasa.gov/universe/stars/types/</a></li>
+<li>ESA overview of white dwarfs and planetary debris is commonly covered in ESA/Hubble and university resources; verify exact source URL before citation in shipped game text.</li>
+<li>Reliability note: individual engulfment claims often rely on indirect spectroscopy/rotation/dust evidence. Use in-game scan language like “consistent with” unless a source is direct observation.</li>
+</ul>
+
+<div class="footer">Generated by the While I Sleep queue runner. Standalone HTML: no required external assets.</div>
+</article></main>
+</body></html>

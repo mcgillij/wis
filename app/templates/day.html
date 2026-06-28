@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}WIS outbox {{ day }}{% endblock %}
+{% block content %}
+<div class="card">
+  <p><a href="/">← Dashboard</a></p>
+  <div class="row"><h2 style="margin:0">{{ day }}</h2><span class="badge">{{ reports|length }} report(s)</span></div>
+  <ul class="clean">
+    {% for report in reports %}<li><a href="/reports/{{ day }}/{{ report.filename }}">{{ report.title }}</a> <span class="muted">{{ report.filename }}</span></li>{% endfor %}
+  </ul>
+</div>
+{% endblock %}
